@@ -1,0 +1,9 @@
+.project
+.settings/
+.buildpath
+.idea/*
+*.iml
+tests/logs/*
+vendor
+node_modules/
+npm-debug.log
