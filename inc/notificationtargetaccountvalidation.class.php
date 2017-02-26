@@ -39,11 +39,11 @@ if (!defined('GLPI_ROOT')) {
 class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends NotificationTarget
 {
 
-    const EVENT_SELF_REGISTRATION          = 'plugin_flyvemdm_self_registration';
-    const EVENT_TRIAL_BEGIN                = 'plugin_flyvemdm_trial_begin';
-    const EVENT_TRIAL_EXPIRATION_REMIND_1  = 'plugin_flyvemdm_trial_remind_1';
-    const EVENT_TRIAL_EXPIRATION_REMIND_2  = 'plugin_flyvemdm_trial_remind_2';
-    const EVENT_POST_TRIAL_REMIND          = 'plugin_flyvemdm_post_trial';
+    const EVENT_SELF_REGISTRATION          = 'plugin_flyvemdmdemo_self_registration';
+    const EVENT_TRIAL_BEGIN                = 'plugin_flyvemdmdemo_trial_begin';
+    const EVENT_TRIAL_EXPIRATION_REMIND_1  = 'plugin_flyvemdmdemo_trial_remind_1';
+    const EVENT_TRIAL_EXPIRATION_REMIND_2  = 'plugin_flyvemdmdemo_trial_remind_2';
+    const EVENT_POST_TRIAL_REMIND          = 'plugin_flyvemdmdemo_post_trial';
 
     /**
     *
@@ -61,16 +61,12 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
     */
    public function getEvents() {
       return array(
-          self::EVENT_SELF_REGISTRATION => __('User registration', 'flyvemdmdemo')
+            self::EVENT_SELF_REGISTRATION          => __('User registration', 'flyvemdmdemo'),
+            self::EVENT_TRIAL_BEGIN                => __('Start of trial period', 'flyuvemdmdemo'),
+            self::EVENT_TRIAL_EXPIRATION_REMIND_1  => __('First expiration reminder', 'flyuvemdmdemo'),
+            self::EVENT_TRIAL_EXPIRATION_REMIND_2  => __('Second expiration reminder', 'flyuvemdmdemo'),
+            self::EVENT_POST_TRIAL_REMIND          => __('post-trial reminder', 'flyuvemdmdemo'),
       );
-   }
-
-    /**
-    * @param NotificationTarget $target
-    */
-   public static function addEvents($target) {
-       Plugin::loadLang('flyvemdmdemo');
-       $target->events[self::EVENT_SELF_REGISTRATION] = __('User registration', 'flyvemdmdemo');
    }
 
     /**
@@ -97,10 +93,10 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
    }
 
     /**
-    * @param NotificationTarget $event
-    * @param array              $options
+    * @param string $event
+    * @param array  $options
     */
-   public static function getAdditionalDatasForTemplate(NotificationTarget $event) {
+   public function addDataForTemplate($event, $options = array()) {
       $signatureDocuments = array_values(
           Config::getConfigurationValues(
               'flyvemdmdemo', [
@@ -111,11 +107,11 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
           )
       );
 
-      switch ($event->raiseevent) {
+      switch ($event) {
          case self::EVENT_SELF_REGISTRATION:
             $config = Config::getConfigurationValues('flyvemdmdemo', array('webapp_url'));
-            if (isset($event->obj)) {
-                $accountValidation = $event->obj;
+            if (isset($this->obj)) {
+                $accountValidation = $this->obj;
                 $accountValidationId = $accountValidation->getID();
                 $validationToken = $accountValidation->getField('validation_pass');
                 $validationUrl = $config['webapp_url'] . "#!/account/$accountValidationId/validation/$validationToken";
@@ -129,54 +125,46 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
                 $trialDuration.= " " . _n('day', 'days', $trialDuration, 'flyvemdmdemo');
 
                 // Fill the template
-                $event->data['##flyvemdmdemo.registration_url##'] = $validationUrl;
-                $event->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
-                $event->data['##flyvemdmdemo.activation_delay##'] = $activationDelay;
-                $event->data['##flyvemdmdemo.trial_duration##'] = $trialDuration;
+                $this->data['##flyvemdmdemo.registration_url##'] = $validationUrl;
+                $this->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
+                $this->data['##flyvemdmdemo.activation_delay##'] = $activationDelay;
+                $this->data['##flyvemdmdemo.trial_duration##'] = $trialDuration;
 
-                $event->obj->documents = $signatureDocuments;
+                $this->obj->documents = $signatureDocuments;
             }
             break;
 
          case self::EVENT_TRIAL_BEGIN:
             $config = Config::getConfigurationValues('flyvemdmdemo', array('webapp_url'));
-            if (isset($event->obj)) {
-                $event->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
+            if (isset($this->obj)) {
+                $this->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
 
-                $event->obj->documents = $signatureDocuments;
+               $this->obj->documents = $signatureDocuments;
             }
             break;
 
          case self::EVENT_TRIAL_EXPIRATION_REMIND_1:
          case self::EVENT_TRIAL_EXPIRATION_REMIND_2:
             $config = Config::getConfigurationValues('flyvemdmdemo', array('webapp_url'));
-            if (isset($event->obj)) {
-                $accountValidation = $event->obj;
+            if (isset($this->obj)) {
+                $accountValidation = $this->obj;
 
                 // Compute the remaining trial days depending on the first or second reminder
-               switch ($event->raiseevent) {
-                  case  self::EVENT_TRIAL_EXPIRATION_REMIND_1:
-                      $delay = $accountValidation->getReminderDelay(1);
-                    break;
+                $delay = $accountValidation->getReminderDelay($event);
+                $delay .= " " . _n('day', 'days', $delay, 'flyvemdmdemo');
 
-                  case  self::EVENT_TRIAL_EXPIRATION_REMIND_2:
-                      $delay = $accountValidation->getReminderDelay(2);
-                    break;
-               }
-                $delay.= " " . _n('day', 'days', $delay, 'flyvemdmdemo');
+                $this->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
+                $this->data['##flyvemdmdemo.days_remaining##'] = $delay;
 
-                $event->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
-                $event->data['##flyvemdmdemo.days_remaining##'] = $delay;
-
-                $event->obj->documents = $signatureDocuments;
+                $this->obj->documents = $signatureDocuments;
             }
             break;
 
          case self::EVENT_POST_TRIAL_REMIND:
-            if (isset($event->obj)) {
-                $accountValidation = $event->obj;
+            if (isset($this->obj)) {
+                $accountValidation = $this->obj;
 
-                $event->obj->documents = $signatureDocuments;
+                $this->obj->documents = $signatureDocuments;
             }
       }
    }

@@ -413,17 +413,13 @@ class DemoAccountTest extends ApiRestTestCase
       $this->assertTrue($user->getFromDBbyName($name));
       $userId = $user->getID();
 
-      // Divide by 2 the reminder delay before expiration
+      // set end of trial to first reminder delay minus 1 days
       $accountValidation = new PluginFlyvemdmdemoAccountvalidation();
 
-      $endOfTrialDatetime = new DateTime();
-      $remindDateTime = new DateTime();
-      $endOfTrialDatetime->add(new DateInterval('P' . $accountValidation->getTrialDuration() . 'D'));
-      $remindDateTime->add(new DateInterval('P' . PluginFlyvemdmdemoAccountvalidation::TRIAL_REMIND_1 . 'D'));
-      $half = $endOfTrialDatetime->getTimestamp() - $remindDateTime->getTimestamp();
-      $half = (int) ($half / 2);
-      $expirationDateTime = new DateTime();
-      $expirationDateTime->add(new DateInterval('PT' . $half . 'S'));
+      $reminderDelay = $accountValidation->getReminderDelay(
+         PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_1);
+      $reminderDelay--;
+      $expirationDateTime = new DateTime("+$reminderDelay days");
       $expirationDateTime = $expirationDateTime->format('Y-m-d H:i:s');
 
       $accountValidation_table = PluginFlyvemdmdemoAccountvalidation::getTable();

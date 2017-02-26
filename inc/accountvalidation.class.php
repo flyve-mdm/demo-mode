@@ -39,42 +39,32 @@ if (!defined('GLPI_ROOT')) {
 class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
 {
 
-    /**
+   /**
     * Delay to activate an account; in days
     *
     * @var string
     */
-    const ACTIVATION_DELAY = '1';
+   const ACTIVATION_DELAY = '1';
 
-    /**
+   /**
     * Trial duration in days
     *
     * @var string
     */
-    const TRIAL_LIFETIME       = '90';
+   const TRIAL_LIFETIME       = '90';
 
-    /**
-    * delay after beginning of a trial for first remind; in days
-    *
-    * @var string
+   /**
+    * set the days before end of trial to send a notification
+    * Must be +/- sign and integer, without space
+    * @var array
     */
-    const TRIAL_REMIND_1       = '75';
+   private $reminderDelays = [
+       PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_1 => '15',
+       PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_2 => '5',
+       PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_POST_TRIAL_REMIND => '-5',
+   ];
 
-    /**
-    * delay after beginning of a trial for second remind; in days
-    *
-    * @var string
-    */
-    const TRIAL_REMIND_2       = '85';
-
-    /**
-    * delay after end of a trial for last remind; in days
-    *
-    * @var string
-    */
-    const TRIAL_POST_REMIND    = '5';
-
-    /**
+   /**
     * Localized name of the type
     *
     * @param $nb  integer  number of item in the type (default 0)
@@ -117,18 +107,6 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
       return static::TRIAL_LIFETIME;
    }
 
-   public function getReminderDelay($reminderNumber) {
-      switch ($reminderNumber) {
-         case 1:
-            return (self::TRIAL_LIFETIME - self::TRIAL_REMIND_1);
-         break;
-
-         case 2:
-            return (self::TRIAL_LIFETIME - self::TRIAL_REMIND_2);
-         break;
-      }
-   }
-
    public function getPostReminderDelay($reminderNumber) {
       switch ($reminderNumber) {
          case 1:
@@ -146,7 +124,6 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
       global $DB;
 
       $ok = false;
-      $accountValidation = new static();
       $table = static::getTable();
 
       do {
@@ -310,10 +287,10 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
     /**
     * Remove accounts not activated and with expired validation token
     *
-    * @param  unknown $task
+    * @param  CronTask $task
     * @return integer quantity of accounts removed
     */
-   public static function cronCleanupAccountActivation($task) {
+   public static function cronCleanupAccountActivation(CronTask $task) {
       $task->log("Delete expired account activations");
 
       // Compute the oldest items to keep
@@ -349,10 +326,10 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
     /**
     * Disable accounts with trial over
     *
-    * @param  unknown $task
+    * @param  CronTask $task
     * @return integer
     */
-   public static function cronDisableExpiredTrial($task) {
+   public static function cronDisableExpiredTrial(CronTask $task) {
       $task->log("Disable expired trial accounts");
       $volume = 0;
 
@@ -387,12 +364,13 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
       return 1;
    }
 
-    /**
+   /**
     *
-    * @param unknown $task
+    * @param CronTask $task
+    *
     * @return number
     */
-   public static function cronRemindTrialExpiration($task) {
+   public static function cronRemindTrialExpiration(CronTask $task) {
       $task->log("Remind the trial incoming expiration");
       $volume = 0;
 
@@ -404,84 +382,29 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
       }
 
       $accountValidation = new static();
-
-      // Compute the dates for all reminders
-      $currentDateTime = new DateTime($_SESSION["glpi_currenttime"]);
-      $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
-
-      $remindDateTime_1 = new DateTime($_SESSION["glpi_currenttime"]);
-      $remindDateTime_1->add(new DateInterval('P' . $accountValidation->getReminderDelay(1) . 'D'));
-      $remindDateTime_1 = $remindDateTime_1->format('Y-m-d H:i:s');
-
-      $remindDateTime_2 = new DateTime($_SESSION["glpi_currenttime"]);
-      $remindDateTime_2->add(new DateInterval('P' . $accountValidation->getReminderDelay(2) . 'D'));
-      $remindDateTime_2 = $remindDateTime_2->format('Y-m-d H:i:s');
-
-      $remindDateTime_3 = new DateTime($_SESSION["glpi_currenttime"]);
-      $remindDateTime_3->sub(new DateInterval('P' . $accountValidation->getPostReminderDelay(1) . 'D'));
-      $remindDateTime_3 = $remindDateTime_3->format('Y-m-d H:i:s');
-
-      // Process first reminder
-      $rows = $accountValidation->find(
-          "`validation_pass` = ''
-                                        AND (`date_end_trial` < '$remindDateTime_1')
-                                        AND `is_reminder_1_sent` = '0'",
-          '',
-          '100'
-      );
-      foreach ($rows as $id => $row) {
-         $accountValidation = new static();
-         $accountValidation->getFromDB($id);
-         NotificationEvent::raiseEvent(
-             PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_1,
-             $accountValidation,
-             array('entities_id' => $accountValidation->getField('assigned_entities_id'))
+      foreach ($accountValidation->reminderDelays as $notification => $days) {
+         $deadlineDate = new DateTime($_SESSION["glpi_currenttime"] . "$days days");
+         $deadlineDate = $deadlineDate->format('Y-m-d H:i:s');
+         $flagColumn = $accountValidation->getReminderColumnFromNotificationId($notification);
+         $rows = $accountValidation->find(
+            "`validation_pass` = ''
+             AND (`date_end_trial` < '$deadlineDate')
+             AND `$flagColumn` = '0'",
+            '',
+            '100'
          );
-         if ($accountValidation->update(array('id' => $id, 'is_reminder_1_sent' => '1'))) {
-            $volume++;
-         }
-      }
 
-      // Process second reminder
-      $rows = $accountValidation->find(
-          "`validation_pass` = ''
-                                        AND (`date_end_trial` < '$remindDateTime_2')
-                                        AND `is_reminder_2_sent` = '0'",
-          '',
-          '100'
-      );
-      foreach ($rows as $id => $row) {
-         $accountValidation = new static();
-         $accountValidation->getFromDB($id);
-         NotificationEvent::raiseEvent(
-             PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_2,
-             $accountValidation,
-             array('entities_id' => $accountValidation->getField('assigned_entities_id'))
-         );
-         if ($accountValidation->update(array('id' => $id, 'is_reminder_2_sent' => '1'))) {
-            $volume++;
-         }
-      }
-
-      // Process post expiration reminder
-      $rows = $accountValidation->find(
-          "`validation_pass` = ''
-                                        AND (`date_end_trial` < '$remindDateTime_3')
-                                        AND `is_post_reminder_sent` = '0'
-                                        AND `is_trial_ended` = '1'",
-          '',
-          '100'
-      );
-      foreach ($rows as $id => $row) {
-         $accountValidation = new static();
-         $accountValidation->getFromDB($id);
-         NotificationEvent::raiseEvent(
-             PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_POST_TRIAL_REMIND,
-             $accountValidation,
-             array('entities_id' => $accountValidation->getField('assigned_entities_id'))
-         );
-         if ($accountValidation->update(array('id' => $id, 'is_post_reminder_sent' => '1'))) {
-            $volume++;
+         foreach ($rows as $row) {
+            $accountValidation = new static();
+            $accountValidation->getFromDB($row['id']);
+            NotificationEvent::raiseEvent(
+               $notification,
+               $accountValidation,
+               ['entities_id' => $accountValidation->getField('assigned_entities_id')]
+            );
+            if ($accountValidation->update(array('id' => $row['id'], $flagColumn => '1'))) {
+               $volume++;
+            }
          }
       }
 
@@ -552,9 +475,9 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
     /**
     * Diable a trial user account
     *
-    * @param unknown $userId
-    * @param unknown $profileId
-    * @param unknown $entityId
+    * @param integer $userId
+    * @param integer $profileId
+    * @param integer $entityId
     */
    protected function disableTrialAccount($userId, $profileId, $entityId) {
       $config = Config::getConfigurationValues('flyvemdmdemo', array('demo_time_limit', 'inactive_registered_profiles_id'));
@@ -587,5 +510,39 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
             }
          }
       }
+   }
+
+
+   public function getReminderDelay($notificationId) {
+      return $this->reminderDelays[$notificationId];
+   }
+
+ /**
+    * Return the column name of the sent flag for each reminder
+    *
+    * @param string $notificationId
+    *
+    * @return string
+    */
+   private function getReminderColumnFromNotificationId($notificationId) {
+      switch ($notificationId) {
+         case PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_1:
+            return 'is_reminder_1_sent';
+            break;
+
+         case PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_2:
+            return 'is_reminder_2_sent';
+            break;
+
+         case PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_POST_TRIAL_REMIND:
+            return 'is_post_reminder_sent';
+            break;
+      }
+
+      return '';
+   }
+
+   public function getReminderDelays() {
+      return $this->reminderDelays;
    }
 }
