@@ -129,7 +129,7 @@ class DemoAccountTest extends ApiRestTestCase
       $user = new User();
       $user->getFromDBbyName(PluginFlyvemdmdemoConfig::SERVICE_ACCOUNT_NAME);
       $this->assertFalse($user->isNewItem());
-      $userToken = $user->getField('personal_token');
+      $userToken = $user->getField('api_token');
 
       $headers = ['authorization' => "user_token $userToken"];
       $this->emulateRestRequest('get', 'initSession', $headers);

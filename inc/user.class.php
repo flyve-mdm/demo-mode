@@ -69,7 +69,7 @@ class PluginFlyvemdmdemoUser extends User
     *
     * @return string
     */
-   public static function getTable() {
+   public static function getTable($classname = null) {
       if (empty($_SESSION['glpi_table_of'][get_called_class()])) {
          $_SESSION['glpi_table_of'][get_called_class()] = User::getTable();
       }

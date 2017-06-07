@@ -102,7 +102,7 @@ class FleetIntegrationTest extends ApiRestTestCase
           ]
       );
 
-      self::loginWithUserToken(User::getPersonalToken($invitation->getField('users_id')));
+      self::loginWithUserToken(User::getToken($invitation->getField('users_id'), 'api_token'));
 
       $agent = new PluginFlyvemdmAgent();
       $agent ->add(

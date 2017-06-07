@@ -60,7 +60,7 @@ class PluginFlyvemdmdemoConfig extends CommonDBTM
 
       $user = new User();
       if ($user->getFromDBbyName(self::SERVICE_ACCOUNT_NAME)) {
-         $apiKey = $user->getField('personal_token');
+         $apiKey = $user->getField('api_token');
       } else {
          $apiKey = '';
       }
@@ -102,7 +102,7 @@ class PluginFlyvemdmdemoConfig extends CommonDBTM
       echo '</tr>';
 
       echo '<tr class="tab_bg_1">';
-      echo '<td>'. __("Service's User Token", "flyvemdmdemo").'</td>';
+      echo '<td>'. __("Service's API Token", "flyvemdmdemo").'</td>';
       echo '<td>' . $apiKey;
       echo '</td>';
       echo '<td>'. __("To be saved in frontend's app/config.js file", "flyvemdmdemo").'</td>';

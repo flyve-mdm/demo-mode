@@ -254,12 +254,12 @@ class PluginFlyvemdmdemoInstaller {
                'comment'         => 'Flyve MDM service account',
                'firstname'       => 'Plugin Flyve MDM demo',
                'password'        => '42',
-               'personal_token'  => User::getUniquePersonalToken(),
                '_profiles_id'    => $profile->getID(),
                'is_active'       => '0',
          ])) {
             die ('Could not create the service account');
          }
+         User::getToken($user->getID(), 'api_token');
       }
    }
 
