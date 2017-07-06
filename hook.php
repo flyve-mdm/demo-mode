@@ -80,6 +80,7 @@ function plugin_flyvemdmdemo_hook_pre_entity_add(CommonDBTM $item) {
    if ($_SESSION['glpiactiveprofile']['id'] == $serviceProfileId) {
       if (PluginFlyvemdmdemoUser::getCreation() !== true) {
          $item->input = null;
+         Session::addMessageAfterRedirect(__('Not allowed', 'flyvemdm'));
          return false;
       }
    }
