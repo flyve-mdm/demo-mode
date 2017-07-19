@@ -30,9 +30,11 @@ along with Flyve MDM Plugin for GLPI. If not, see http://www.gnu.org/licenses/.
  ------------------------------------------------------------------------------
 */
 
-define("PLUGIN_FLYVEMDMDEMO_VERSION", "0.0.1");
+define("PLUGIN_FLYVEMDMDEMO_VERSION", "1.0.0-dev");
+// is or is not an official release of the plugin
+define('PLUGIN_FLYVEMDMDEMO_IS_OFFICIAL_RELEASE', false);
 // Minimal GLPI version, inclusive
-define("PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION", "9.1");
+define("PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION", "9.2");
 // Maximum GLPI version, exclusive
 define("PLUGIN_FLYVEMDMDEMO_GLPI_MAX_VERSION", "9.3");
 // Minimum PHP version inclusive
@@ -81,41 +83,44 @@ function plugin_init_flyvemdmdemo() {
 
 // Get the name and the version of the plugin - Needed
 function plugin_version_flyvemdmdemo() {
-    $author = "<a href='http://www.teclib.com'>Teclib</a>";
-    return array ('name'           => __s('Flyve Mobile Device Management Demo', 'flyvemdmdemo'),
-         'version'        => PLUGIN_FLYVEMDMDEMO_VERSION,
-         'author'         => $author,
-         'license'        => 'AGPLv3+',
-         'homepage'       => '',
-         'minGlpiVersion' => PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION);
+   $author = "<a href='http://www.teclib.com'>Teclib</a>";
+   if (defined('GLPI_PREVER') && PLUGIN_FLYVEMDM_IS_OFFICIAL_RELEASE == false) {
+      $glpiVersion = version_compare(GLPI_PREVER, PLUGIN_FLYVEMDM_GLPI_MIN_VERSION, 'lt');
+   } else {
+      $glpiVersion = PLUGIN_FLYVEMDM_GLPI_MIN_VERSION;
+   }
+   return [
+      'name'           => __s('Flyve Mobile Device Management Demo', "flyvemdmdemo"),
+      'version'        => PLUGIN_FLYVEMDMDEMO_VERSION,
+      'author'         => $author,
+      'license'        => 'AGPLv3+',
+      'homepage'       => '',
+      'minGlpiVersion' => $glpiVersion,
+      'requirements'   => [
+         'glpi' => [
+            'min' => $glpiVersion,
+            'max' => '9.3',
+            'dev' => PLUGIN_FLYVEMDMDEMO_IS_OFFICIAL_RELEASE == false,
+            'plugins'   => [
+               'flyvemdm',
+            ],
+         ],
+         'php' => [
+            'min'    => PLUGIN_FLYVEMDMDEMO_PHP_MIN_VERSION,
+         ]
+      ]
+   ];
 }
 
 // Optional : check prerequisites before install : may print errors or add to message after redirect
 function plugin_flyvemdmdemo_check_prerequisites() {
     $prerequisitesSuccess = true;
-
-   if (version_compare(GLPI_VERSION, PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION, 'lt') || version_compare(GLPI_VERSION, PLUGIN_FLYVEMDMDEMO_GLPI_MAX_VERSION, 'ge')) {
-      echo "This plugin requires GLPI >= " . PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION . " and GLPI < " . PLUGIN_FLYVEMDMDEMO_GLPI_MAX_VERSION . "<br>";
-      $prerequisitesSuccess = false;
-   }
-
-   if (version_compare(PHP_VERSION, PLUGIN_FLYVEMDMDEMO_PHP_MIN_VERSION, 'lt')) {
-      echo "This plugin requires PHP >=" . PLUGIN_FLYVEMDMDEMO_PHP_MIN_VERSION . "<br>";
-      $prerequisitesSuccess = false;
-   }
-
    if (!is_readable(__DIR__ . '/vendor/autoload.php') || !is_file(__DIR__ . '/vendor/autoload.php')) {
       echo "Run composer install --no-dev in the plugin directory<br>";
       $prerequisitesSuccess = false;
    }
 
-    $plugin = new Plugin();
-   if (!($plugin->isInstalled('flyvemdm') && $plugin->isActivated('flyvemdm'))) {
-      echo "This plugin requires Flyve MDM for GLPI<br>";
-      $prerequisitesSuccess = false;
-   }
-
-    return $prerequisitesSuccess;
+   return $prerequisitesSuccess;
 }
 
 // Uninstall process for plugin : need to return true if succeeded : may display messages or add to message after redirect

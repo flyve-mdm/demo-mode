@@ -315,6 +315,10 @@ class PluginFlyvemdmdemoUser extends User
                );
                $affectation['assigned_entities_id'] = $affectation['entities_id'];
                $affectation['profiles_id']          = $config['registered_profiles_id'];
+               if (isset($this->input['_newsletter']) && $this->input['_newsletter'] != '0') {
+                  // the user subscribes to the newsletter
+                  $affectation['newsletter'] = '1';
+               }
                $accountValidation->add($affectation);
 
                NotificationEvent::raiseEvent(
@@ -356,6 +360,10 @@ class PluginFlyvemdmdemoUser extends User
       if (count($rows) > 0) {
          $item->input = false;
       }
+
+      //remove newsletter subscription
+      $subscription = new PluginFlyvemdmdemoNewsletterSubscriber();
+      $subscription->deleteByCriteria(['users_id' => $item->getID()]);
    }
 
 }

@@ -80,8 +80,8 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
     *
     * @param $nb  integer  number of item in the type (default 0)
     */
-   public static function getTypeName($nb=0) {
-      return _n('Account validation', 'Account validations', $nb, "flyvemdmdemo");
+   public static function getTypeName($nb = 0) {
+      return _n('Account validation', 'Account validations', $nb, 'flyvemdmdemo');
    }
 
     /**
@@ -277,6 +277,14 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
              $this,
              array('entities_id' => $this->getField('assigned_entities_id'))
          );
+
+         //Add the user to the newsletter
+         if ($this->fields['newsletter'] != '0') {
+            $subscription = new PluginFlyvemdmdemoNewsletterSubscriber();
+            $subscription->add([
+               'users_id'  => $this->fields['users_id'],
+            ]);
+         }
       }
    }
 

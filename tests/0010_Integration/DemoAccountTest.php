@@ -74,13 +74,13 @@ class DemoAccountTest extends ApiRestTestCase
 
    public function activeAccountProvider() {
       return [
-          'active'      => [
-                'name'      => 'active@localhost.local',
-                'password'  => 'password',
-                'firstname' => 'is',
-                'realname'  => 'active',
-          ],
-      ];
+         'active'      => [
+                'name'        => 'active@localhost.local',
+                'password'    => 'password',
+                'firstname'   => 'is',
+                'realname'    => 'active',
+         ],
+       ];
    }
 
    public function expiredAccountProvider() {
@@ -257,11 +257,8 @@ class DemoAccountTest extends ApiRestTestCase
     * @depends testInitGetServiceSessionToken
     */
    public function testCreateDemoUser($sessionToken) {
-      global $CFG_GLPI;
-
       $headers = ['Session-Token' => $sessionToken];
-      $body = json_encode(
-          [
+      $body = json_encode([
           'input'     => [
                 'name'      => self::$registeredUser,
                 'password'  => self::$registeredPass,
@@ -269,8 +266,7 @@ class DemoAccountTest extends ApiRestTestCase
                 'firstname' => 'John',
                 'realname'  => 'Doe',
           ],
-          ]
-      );
+      ]);
       $this->emulateRestRequest('post', 'PluginFlyvemdmdemoUser', $headers, $body);
 
       // Check user creation
@@ -288,6 +284,7 @@ class DemoAccountTest extends ApiRestTestCase
       $accountValidationId = $accountValidation->getID();
       $this->assertNotNull($accountValidation);
       $this->assertEquals($config['registered_profiles_id'], $accountValidation->getField('profiles_id'));
+      $this->assertEquals('0', $accountValidation->getField('newsletter'));
 
       // check the entity of the user
       $userName = self::$registeredUser;
@@ -304,15 +301,15 @@ class DemoAccountTest extends ApiRestTestCase
       $notificationTemplate = new NotificationTemplate();
       $notificationTemplate->getFromDBByQuery(
           "WHERE `itemtype`= 'PluginFlyvemdmdemoAccountvalidation'
-                                               AND `name` = 'Self registration'"
+           AND `name` = 'Self registration'"
       );
       $notificationTemplateId = $notificationTemplate->getID();
-      $queuedMail = new QueuedMail();
+      $queuedNotification = new QueuedNotification();
       $this->assertTrue(
-          $queuedMail->getFromDBByQuery(
+          $queuedNotification->getFromDBByQuery(
               "WHERE `itemtype`='PluginFlyvemdmdemoAccountvalidation'
-                                                       AND `items_id`='$accountValidationId'
-                                                       AND `notificationtemplates_id` = '$notificationTemplateId'"
+               AND `items_id`='$accountValidationId'
+               AND `notificationtemplates_id` = '$notificationTemplateId'"
           )
       );
 
@@ -325,17 +322,15 @@ class DemoAccountTest extends ApiRestTestCase
     */
    public function testCreateOtherDemoUsers($name, $password, $firstname, $realname, $sessionToken) {
       $headers = ['Session-Token' => $sessionToken];
-      $body = json_encode(
-          [
-          'input'     => [
+      $body = json_encode([
+           'input'     => [
                 'name'      => $name,
                 'password'  => $password,
                 'password2' => $password,
                 'firstname' => $firstname,
                 'realname'  => $realname,
-          ],
-          ]
-      );
+           ],
+      ]);
       $this->emulateRestRequest('post', 'PluginFlyvemdmdemoUser', $headers, $body);
 
       // Check user creation
@@ -371,13 +366,10 @@ class DemoAccountTest extends ApiRestTestCase
     * @depends testCreateOtherDemoUsers
     */
    public function testInitActivateOtherAccount($name, $password, $firstname, $realname, $sessionToken) {
-      global $DB;
-
       $user = new User();
       $this->assertTrue($user->getFromDBbyName($name));
       $userId = $user->getID();
       $this->testActivateDemoAccount($sessionToken, $userId);
-
    }
 
     /**
@@ -593,9 +585,9 @@ class DemoAccountTest extends ApiRestTestCase
                                                AND `name` = 'Account activated'"
       );
       $notificationTemplateId = $notificationTemplate->getID();
-      $queuedMail = new QueuedMail();
+      $queuedNtification = new QueuedNotification();
       $this->assertTrue(
-          $queuedMail->getFromDBByQuery(
+          $queuedNtification->getFromDBByQuery(
               "WHERE `itemtype`='PluginFlyvemdmdemoAccountvalidation'
             AND `items_id`='$accountValidationId'
             AND `notificationtemplates_id` = '$notificationTemplateId'"
@@ -665,4 +657,136 @@ class DemoAccountTest extends ApiRestTestCase
       $accountValidation = $this->getAccountValidation($user->getID());
       $this->assertEquals('1', $accountValidation->getField('is_reminder_1_sent'));
    }
+
+   /**
+    * @depends testInitGetServiceSessionToken
+    */
+   public function testNoNewsletterSubscription($sessionToken) {
+      global $DB;
+
+      // register a user
+      $input = [
+            'name'        => 'nonews@localhost.local',
+            'password'    => 'password',
+            'password2'   => 'password',
+            'firstname'   => 'is',
+            'realname'    => 'active',
+      ];
+
+      $headers = ['Session-Token' => $sessionToken];
+      $body = json_encode([
+            'input'     => $input,
+      ]);
+
+      $this->emulateRestRequest('post', 'PluginFlyvemdmdemoUser', $headers, $body);
+
+      $this->assertEquals(201, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+      $userId = $this->restResponse['id'];
+
+      // check the account validation item
+      $accountValidation = $this->getAccountValidation($userId);
+      $this->assertNotNull($accountValidation);
+      $this->assertEquals('0', $accountValidation->getField('newsletter'));
+
+      $accountValidation = $this->getAccountValidation($userId);
+
+      // Force activation pass to be useable
+      $date = new DateTime();
+      $accountValidation_table = PluginFlyvemdmdemoAccountvalidation::getTable();
+      $success = $DB->query(
+            "UPDATE `$accountValidation_table`
+            SET `date_creation` = '" . $date->format('Y-m-d H:i:s') ."'
+            WHERE `users_id` = '$userId'"
+            );
+
+      // Check the creation date is actually updated
+      $this->assertTrue($success);
+
+      // Try to validate the account
+      $body = json_encode(
+            [
+                  'input'     => [
+                        'id'           => $accountValidation->getID(),
+                        '_validate'    => $accountValidation->getField('validation_pass'),
+                  ],
+            ]
+      );
+      $this->emulateRestRequest('put', 'PluginFlyvemdmdemoAccountValidation', $headers, $body);
+
+      // Request should succeed
+      $this->assertEquals(200, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+
+      $subscription = new PluginFlyvemdmdemoNewsletterSubscriber();
+      $subscription->getFromDBByCrit(['users_id' => $userId]);
+
+      // Check the user is not in the newsletter subscribers
+      $this->assertTrue($subscription->isNewItem());
+   }
+
+   /**
+    * @depends testInitGetServiceSessionToken
+    */
+   public function testNewsletterSubscription($sessionToken) {
+      global $DB;
+
+      // register a user
+      $input = [
+            'name'        => 'wantnews@localhost.local',
+            'password'    => 'password',
+            'password2'   => 'password',
+            'firstname'   => 'is',
+            'realname'    => 'active',
+            '_newsletter' => '1',
+      ];
+
+      $headers = ['Session-Token' => $sessionToken];
+      $body = json_encode([
+            'input'     => $input,
+      ]);
+
+      $this->emulateRestRequest('post', 'PluginFlyvemdmdemoUser', $headers, $body);
+
+      $this->assertEquals(201, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+      $userId = $this->restResponse['id'];
+
+      // check the account validation item
+      $accountValidation = $this->getAccountValidation($userId);
+      $this->assertNotNull($accountValidation);
+      $this->assertEquals('1', $accountValidation->getField('newsletter'));
+
+      $accountValidation = $this->getAccountValidation($userId);
+
+      // Force activation pass to be useable
+      $date = new DateTime();
+      $accountValidation_table = PluginFlyvemdmdemoAccountvalidation::getTable();
+      $success = $DB->query(
+            "UPDATE `$accountValidation_table`
+            SET `date_creation` = '" . $date->format('Y-m-d H:i:s') ."'
+            WHERE `users_id` = '$userId'"
+            );
+
+      // Check the creation date is actually updated
+      $this->assertTrue($success);
+
+      // Try to validate the account
+      $body = json_encode(
+            [
+                  'input'     => [
+                        'id'           => $accountValidation->getID(),
+                        '_validate'    => $accountValidation->getField('validation_pass'),
+                  ],
+            ]
+            );
+      $this->emulateRestRequest('put', 'PluginFlyvemdmdemoAccountValidation', $headers, $body);
+
+      // Request should succeed
+      $this->assertEquals(200, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+
+      $subscription = new PluginFlyvemdmdemoNewsletterSubscriber();
+      $subscription->getFromDBByCrit(['users_id' => $userId]);
+
+      // Check the user is not in the newsletter subscribers
+      $this->assertFalse($subscription->isNewItem());
+   }
+
 }

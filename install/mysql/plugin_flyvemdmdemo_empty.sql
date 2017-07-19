@@ -1,6 +1,3 @@
-#Storkmdm Dump database on 2016-04-26 15:57
-
--- Export de la structure de table glpi-flyvemdmdemo. glpi_plugin_flyvemdmdemo_accountvalidations
 DROP TABLE IF EXISTS `glpi_plugin_flyvemdmdemo_accountvalidations`;
 CREATE TABLE `glpi_plugin_flyvemdmdemo_accountvalidations` (
   `id`                                int(11)                  NOT NULL AUTO_INCREMENT,
@@ -14,5 +11,16 @@ CREATE TABLE `glpi_plugin_flyvemdmdemo_accountvalidations` (
   `is_reminder_1_sent`                tinyint(1)               NOT NULL DEFAULT '0',
   `is_reminder_2_sent`                tinyint(1)               NOT NULL DEFAULT '0',
   `is_post_reminder_sent`             tinyint(1)               NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `newsletter`                        tinyint(1)               NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `assigned_entities_id` (`assigned_entities_id`),
+  INDEX `profiles_id` (`profiles_id`) 
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `glpi_plugin_flyvemdmdemo_newslettersubscribers`;
+CREATE TABLE `glpi_plugin_flyvemdmdemo_newslettersubscribers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `users_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `users_id` (`users_id`) 
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

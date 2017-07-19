@@ -1,17 +1,30 @@
 {
-    "require": {
-    },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "^2.7",
-        "glpi-project/coding-standard": "0.5",
-        "phpunit/phpunit": "^4.8 || ^5.4 || ^6.0",
-        "flyve-mdm/test": "dev-master",
-        "consolidation/robo": "*"
-    },
-    "repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/flyve-mdm/flyve-mdm-glpi-test"
-    }
-    ]
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "title": "Flyve MDM Demo",
+    "description": "Flyve MDM Demo plugin for GLPI",
+    "version": "1.0.0-dev",
+    "type": "project",
+    "licence": "AGPLv3+",
+    "keywords": [
+        "glpi",
+        "flyve",
+        "mdm",
+        "demo"
+    ],
+	"require" : {
+		"docopt/docopt": "^1.0"
+	},
+	"require-dev" : {
+		"squizlabs/php_codesniffer" : "^2.7",
+		"glpi-project/coding-standard" : "0.5",
+		"phpunit/phpunit" : "^4.8 || ^5.4 || ^6.0",
+		"flyve-mdm/test" : "dev-master",
+		"consolidation/robo" : "*"
+	},
+	"repositories" : [{
+			"type" : "vcs",
+			"url" : "https://github.com/flyve-mdm/flyve-mdm-glpi-test"
+		}
+	]
 }

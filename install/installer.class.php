@@ -157,15 +157,6 @@ class PluginFlyvemdmdemoInstaller {
     * Give all rights on the plugin to the profile of the current user
     */
    protected function createFirstAccess() {
-      $profileRight = new ProfileRight();
-
-      $profileRight->updateProfileRights($_SESSION['glpiactiveprofile']['id'], array(
-            PluginFlyvemdmProfile::$rightname         => PluginFlyvemdmProfile::RIGHT_FLYVEMDM_USE,
-            PluginFlyvemdmEntityconfig::$rightname    => READ
-                                                         | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_DEVICE_COUNT_LIMIT
-                                                         | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_APP_DOWNLOAD_URL
-                                                         | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_INVITATION_TOKEN_LIFE,
-      ));
    }
 
    protected function createServiceProfileAccess() {
@@ -263,28 +254,56 @@ class PluginFlyvemdmdemoInstaller {
       }
    }
 
+   /**
+    * Upgrade the plugin to the current code version
+    *
+    * @param string $fromVersion
+    */
    protected function upgrade($fromVersion) {
       $toVersion   = str_replace('.', '-', PLUGIN_FLYVEMDMDEMO_VERSION);
 
       switch ($fromVersion) {
+         case '2.0.0':
+            // Example : upgrade to version 3.0.0
+            // $this->upgradeOneStep('3.0.0');
+         case '3.0.0':
+            // Example : upgrade to version 4.0.0
+            // $this->upgradeOneStep('4.0.0');
+
          default:
       }
       if ($this->endsWith(PLUGIN_FLYVEMDMDEMO_VERSION, "-dev")) {
-         if (is_readable(__DIR__ . "/update_dev.php") && is_file(__DIR__ . "/update_dev.php")) {
-            include __DIR__ . "/update_dev.php";
-            if (function_exists('update_dev')) {
-               update_dev($this->migration);
-            }
+         $this->upgradeOneStep('dev');
+      }
+   }
+
+   /**
+    * Proceed to upgrade of the plugin to the given version
+    *
+    * @param string $toVersion
+    */
+   protected function upgradeOneStep($toVersion) {
+
+      $suffix = str_replace('.', '_', $toVersion);
+      $includeFile = __DIR__ . "/upgrade/update_to_$suffix.php";
+      if (is_readable($includeFile) && is_file($includeFile)) {
+         include_once $includeFile;
+         $updateFunction = "plugin_flyvemdmdemo_update_to_$suffix";
+         if (function_exists($updateFunction)) {
+            $updateFunction($this->migration);
+            $this->migration->addNewMessageArea("Upgrade to $toVersion");
+            $this->migration->executeMigration();
+            $this->migration->displayMessage('Done');
          }
       }
-
-      $this->createPolicies();
    }
 
    /**
     * http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
-    * @param unknown $haystack
-    * @param unknown $needle
+    * @param string $haystack
+    * @param string $needle
+    *
+    * @return boolean
     */
    protected function startsWith($haystack, $needle) {
       // search backwards starting from haystack length characters from the end
@@ -293,8 +312,10 @@ class PluginFlyvemdmdemoInstaller {
 
    /**
     * http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
-    * @param unknown $haystack
-    * @param unknown $needle
+    * @param string $haystack
+    * @param string $needle
+    *
+    * @return boolean
     */
    protected function endsWith($haystack, $needle) {
       // search forward starting from end minus needle length characters
@@ -303,6 +324,7 @@ class PluginFlyvemdmdemoInstaller {
 
    /**
     * Uninstall the plugin
+    *
     * @return boolean true (assume success, needs enhancement)
     */
    public function uninstall() {
@@ -451,6 +473,7 @@ class PluginFlyvemdmdemoInstaller {
       $template = new NotificationTemplate();
       $translation = new NotificationTemplateTranslation();
       $notificationTarget = new PluginFlyvemdmNotificationTargetInvitation();
+      $notification_notificationTemplate = new Notification_NotificationTemplate();
 
       foreach ($this->getNotificationTargetRegistrationEvents() as $event => $data) {
          $itemtype = $data['itemtype'];
@@ -487,6 +510,12 @@ class PluginFlyvemdmdemoInstaller {
                   'notificationtemplates_id' => $templateId,
                   'event'                    => $event,
                   'mode'                     => 'mail'
+            ]);
+
+            $notification_notificationTemplate->add([
+                  'notifications_id'         => $notificationId,
+                  'notificationtemplates_id' => $templateId,
+                  'mode'                     => Notification_NotificationTemplate::MODE_MAIL,
             ]);
 
             $notificationTarget->add([

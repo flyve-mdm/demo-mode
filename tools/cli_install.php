@@ -33,7 +33,7 @@ along with Flyve MDM Plugin for GLPI. If not, see http://www.gnu.org/licenses/.
 
 chdir(dirname($_SERVER["SCRIPT_FILENAME"]));
 
-include (__DIR__ . "/docopt.php");
+include (__DIR__ . "/../vendor/docopt/docopt/src/docopt.php");
 
 $doc = <<<DOC
 cli_install.php

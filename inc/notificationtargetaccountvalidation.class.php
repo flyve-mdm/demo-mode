@@ -130,10 +130,10 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
                 $trialDuration.= " " . _n('day', 'days', $trialDuration, 'flyvemdmdemo');
 
                 // Fill the template
-                $event->datas['##flyvemdmdemo.registration_url##'] = $validationUrl;
-                $event->datas['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
-                $event->datas['##flyvemdmdemo.activation_delay##'] = $activationDelay;
-                $event->datas['##flyvemdmdemo.trial_duration##'] = $trialDuration;
+                $event->data['##flyvemdmdemo.registration_url##'] = $validationUrl;
+                $event->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
+                $event->data['##flyvemdmdemo.activation_delay##'] = $activationDelay;
+                $event->data['##flyvemdmdemo.trial_duration##'] = $trialDuration;
 
                 $event->obj->documents = $signatureDocuments;
             }
@@ -142,7 +142,7 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
          case self::EVENT_TRIAL_BEGIN:
             $config = Config::getConfigurationValues('flyvemdmdemo', array('webapp_url'));
             if (isset($event->obj)) {
-                $event->datas['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
+                $event->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
 
                 $event->obj->documents = $signatureDocuments;
             }
@@ -166,8 +166,8 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
                }
                 $delay.= " " . _n('day', 'days', $delay, 'flyvemdmdemo');
 
-                $event->datas['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
-                $event->datas['##flyvemdmdemo.days_remaining##'] = $delay;
+                $event->data['##flyvemdmdemo.webapp_url##'] = $config['webapp_url'];
+                $event->data['##flyvemdmdemo.days_remaining##'] = $delay;
 
                 $event->obj->documents = $signatureDocuments;
             }
@@ -190,7 +190,7 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
     *
     * @param $entity the entity on which the event is raised
     */
-   public function getNotificationTargets($entity) {
+   public function addNotificationTargets($entity) {
       $this->addTarget(Notification::USER, __('Registered user', 'flyvemdmdemo'));
    }
 
@@ -199,12 +199,12 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
     * @param  array $data
     * @param  array $options
     */
-   public function getSpecificTargets($data, $options) {
+   public function addSpecificTargets($data, $options) {
       if ($data['type'] == Notification::USER_TYPE) {
          switch ($data['items_id']) {
             case Notification::USER:
                if ($this->obj->getType() == 'PluginFlyvemdmdemoAccountvalidation') {
-                  $this->addToAddressesList(
+                  $this->addToRecipientsList(
                       [
                       'users_id' => $this->obj->getField('users_id')
                       ]
