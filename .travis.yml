@@ -1,36 +1,39 @@
 language: php
 
-php:
-  - '5.6'
-  - '7.0'
-
 env:
   global:
-    - GLPI_MASTER="https://github.com/glpi-project/glpi -b master"
-    - GLPI_STABLE="https://github.com/flyve-mdm/glpi -b 9.1.2-backport"
-    - GLPI_9_1_BF="https://github.com/glpi-project/glpi -b 9.1/bugfixes"
-    - GLPI_DEV="https://github.com/glpi-project/glpi -b master"
-    - FLYVEMDM_STABLE="https://github.com/flyve-mdm/flyve-mdm-glpi -b master"
-    - FLYVEMDM_DEV="https://github.com/btry/flyve-mdm-glpi -b develop"
-    - FUSION_SOURCE="https://github.com/fusioninventory/fusioninventory-for-glpi -b master"
-  matrix:
-    - GLPI_SOURCE=$GLPI_MASTER FLYVEMDM_SOURCE=$FLYVEMDM_DEV PATCH_FI=0
-    
+    - GLPI_SOURCE="https://github.com/glpi-project/glpi -b master" 
+    - FUSION_SOURCE="https://github.com/fusioninventory/fusioninventory-for-glpi -b master" 
+    - FLYVEMDM_SOURCE="https://github.com/flyve-mdm/flyve-mdm-glpi-plugin -b develop"
+  
 before_script:
+  - if [[ "$HASXDBG" -ne "false" ]]; then phpenv config-rm xdebug.ini; fi
   - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
-  - mv ../flyve-mdm-glpi-demo plugins/flyvemdmdemo
   - composer install --no-dev
+  - sed -e "s/return extension_loaded('mcrypt');/return false;/" -i vendor/ircmaxell/random-lib/lib/RandomLib/AbstractMcryptMixer.php
   - php tools/cliinstall.php --db=glpi-test --user=travis --tests
   - cp tests/config_db.php config/config_db.php
   - mkdir plugins/fusioninventory && git clone --depth=1 $FUSION_SOURCE plugins/fusioninventory
   - mkdir plugins/flyvemdm && git clone --depth=1 $FLYVEMDM_SOURCE plugins/flyvemdm
-  - cd plugins/fusioninventory
-  - if [[ ${PATCH_FI} == "1" ]]; then git apply --check  ../flyvemdm/tests/patches/fi_version-check.patch && git apply ../flyvemdm/tests/patches/fi_version-check.patch; fi
-  - cd ../..
   - cd plugins/flyvemdm && composer install --no-dev && cd ../..
-  - cd plugins/flyvemdmdemo && composer install && cd ../..
+  - mv ../flyve-mdm-glpi-demo plugins/flyvemdmdemo
+  - cd plugins/flyvemdmdemo && composer install -o
 
 script:
-  - cd plugins/flyvemdmdemo
   - vendor/bin/phpunit -v
-  - vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ *.php front/ inc/ tests/
+  - if [[ "$CS" == "true" ]]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ *.php front/ inc/ tests/; fi
+
+matrix:
+  include:
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+      env: CS=true
+    - php: nightly
+      env: HASXDBG=false
+  allow_failures:
+    - php: 7.1
+    - php: nightly
+  
+notifications:
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
