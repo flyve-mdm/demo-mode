@@ -146,6 +146,26 @@ class PluginFlyvemdmdemoUser extends User
          return false;
       }
 
+      if (!isset($input['_plugin_flyvemdmdemo_captchas_id'])
+          || !isset($input['_answer'])) {
+         // captcha and his answer are mandatory
+         Session::addMessageAfterRedirect(__('Turing test not specified', 'flyvemdmdemo'));
+         return false;
+      }
+
+      $captcha = new PluginFlyvemdmdemoCaptcha();
+      $captcha->getFromDB((int) $input['_plugin_flyvemdmdemo_captchas_id']);
+      if ($captcha->isNewItem() && !$captcha->canViewItem()) {
+         // Captcha not found
+         Session::addMessageAfterRedirect(__('Turing test not found', 'flyvemdmdemo'));
+         return false;
+      }
+
+      if (!$captcha->challengeAnswer($input['_answer'])) {
+         Session::addMessageAfterRedirect(__('Turing test failed', 'flyvemdmdemo'));
+         return false;
+      }
+
       // Create the user, with authorization on his entity via the registered user profile
       $config = Config::getConfigurationValues(
           'flyvemdmdemo', array(

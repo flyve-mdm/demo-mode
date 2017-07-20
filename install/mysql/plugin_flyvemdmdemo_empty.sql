@@ -24,3 +24,14 @@ CREATE TABLE `glpi_plugin_flyvemdmdemo_newslettersubscribers` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `users_id` (`users_id`) 
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `glpi_plugin_flyvemdmdemo_captchas`;
+CREATE TABLE `glpi_plugin_flyvemdmdemo_captchas` (
+  `id`                                int(11)                  NOT NULL AUTO_INCREMENT,
+  `ip_address`                        varchar(45)              DEFAULT NULL,
+  `answer`                            varchar(255)             DEFAULT NULL,
+  `date_creation`                     datetime                 NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  INDEX `ip_address` (`ip_address`),
+  INDEX `date_creation` (`date_creation`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

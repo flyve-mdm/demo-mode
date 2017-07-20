@@ -256,6 +256,8 @@ class DemoAccountTest extends ApiRestTestCase
     * @depends testInitGetServiceSessionToken
     */
    public function testCreateDemoUser($sessionToken) {
+      $captchaData = $this->createCaptcha($sessionToken);
+
       $headers = ['Session-Token' => $sessionToken];
       $body = json_encode([
           'input'     => [
@@ -264,6 +266,8 @@ class DemoAccountTest extends ApiRestTestCase
                 'password2' => self::$registeredPass,
                 'firstname' => 'John',
                 'realname'  => 'Doe',
+                '_plugin_flyvemdmdemo_captchas_id' => $captchaData['id'],
+                '_answer'   => $captchaData['answer']
           ],
       ]);
       $this->emulateRestRequest('post', 'PluginFlyvemdmdemoUser', $headers, $body);
@@ -320,6 +324,8 @@ class DemoAccountTest extends ApiRestTestCase
     * @depends testInitGetServiceSessionToken
     */
    public function testCreateOtherDemoUsers($name, $password, $firstname, $realname, $sessionToken) {
+      $captchaData = $this->createCaptcha($sessionToken);
+
       $headers = ['Session-Token' => $sessionToken];
       $body = json_encode([
            'input'     => [
@@ -328,6 +334,8 @@ class DemoAccountTest extends ApiRestTestCase
                 'password2' => $password,
                 'firstname' => $firstname,
                 'realname'  => $realname,
+                '_plugin_flyvemdmdemo_captchas_id' => $captchaData['id'],
+                '_answer'   => $captchaData['answer']
            ],
       ]);
       $this->emulateRestRequest('post', 'PluginFlyvemdmdemoUser', $headers, $body);
@@ -686,6 +694,8 @@ class DemoAccountTest extends ApiRestTestCase
    public function testNoNewsletterSubscription($sessionToken) {
       global $DB;
 
+      $captchaData = $this->createCaptcha($sessionToken);
+
       // register a user
       $input = [
             'name'        => 'nonews@localhost.local',
@@ -693,6 +703,8 @@ class DemoAccountTest extends ApiRestTestCase
             'password2'   => 'password',
             'firstname'   => 'is',
             'realname'    => 'active',
+            '_plugin_flyvemdmdemo_captchas_id' => $captchaData['id'],
+            '_answer'   => $captchaData['answer']
       ];
 
       $headers = ['Session-Token' => $sessionToken];
@@ -751,14 +763,18 @@ class DemoAccountTest extends ApiRestTestCase
    public function testNewsletterSubscription($sessionToken) {
       global $DB;
 
+      $captchaData = $this->createCaptcha($sessionToken);
+
       // register a user
       $input = [
-            'name'        => 'wantnews@localhost.local',
-            'password'    => 'password',
-            'password2'   => 'password',
-            'firstname'   => 'is',
-            'realname'    => 'active',
-            '_newsletter' => '1',
+         'name'        => 'wantnews@localhost.local',
+         'password'    => 'password',
+         'password2'   => 'password',
+         'firstname'   => 'is',
+         'realname'    => 'active',
+         '_newsletter' => '1',
+         '_plugin_flyvemdmdemo_captchas_id' => $captchaData['id'],
+         '_answer'   => $captchaData['answer']
       ];
 
       $headers = ['Session-Token' => $sessionToken];
@@ -782,23 +798,23 @@ class DemoAccountTest extends ApiRestTestCase
       $date = new DateTime();
       $accountValidation_table = PluginFlyvemdmdemoAccountvalidation::getTable();
       $success = $DB->query(
-            "UPDATE `$accountValidation_table`
-            SET `date_creation` = '" . $date->format('Y-m-d H:i:s') ."'
-            WHERE `users_id` = '$userId'"
-            );
+         "UPDATE `$accountValidation_table`
+         SET `date_creation` = '" . $date->format('Y-m-d H:i:s') ."'
+         WHERE `users_id` = '$userId'"
+      );
 
       // Check the creation date is actually updated
       $this->assertTrue($success);
 
       // Try to validate the account
       $body = json_encode(
-            [
-                  'input'     => [
-                        'id'           => $accountValidation->getID(),
-                        '_validate'    => $accountValidation->getField('validation_pass'),
-                  ],
-            ]
-            );
+         [
+            'input'     => [
+               'id'           => $accountValidation->getID(),
+               '_validate'    => $accountValidation->getField('validation_pass'),
+            ],
+         ]
+      );
       $this->emulateRestRequest('put', 'PluginFlyvemdmdemoAccountValidation', $headers, $body);
 
       // Request should succeed
@@ -809,6 +825,34 @@ class DemoAccountTest extends ApiRestTestCase
 
       // Check the user is not in the newsletter subscribers
       $this->assertFalse($subscription->isNewItem());
+   }
+
+   /**
+    *
+    * @param string $sessionToken
+    *
+    * @return array
+    */
+   protected function createCaptcha($sessionToken) {
+      global $DB;
+
+      // Delete all captchas to avoit spamming detection
+      $table = PluginFlyvemdmdemoCaptcha::getTable();
+      $DB->query("TRUNCATE `$table`");
+
+      // Create a captcha
+      $body = json_encode([
+         'input'     => ['dummy' => 'something'],
+      ]);
+      $this->captcha('post', $sessionToken, $body);
+      $this->assertEquals(201, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+
+      $captchaId = $this->restResponse['id'];
+      $result = $DB->query("SELECT * FROM `$table` WHERE `id` = '$captchaId'");
+      $row = $DB->fetch_assoc($result);
+
+      // return id and answer
+      return $row;
    }
 
 }

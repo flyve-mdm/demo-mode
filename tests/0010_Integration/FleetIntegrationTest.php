@@ -68,18 +68,30 @@ class FleetIntegrationTest extends ApiRestTestCase
    protected static $guestEmail;
 
    public static function setUpBeforeClass() {
+      global $DB;
+
       parent::setUpBeforeClass();
       self::$registeredUser = 'registereduser@localhost.local';
       self::$registeredPass = 'password';
       self::$guestEmail     = 'guestuser@localhost.local';
 
       self::login('glpi', 'glpi', true);
+
+      // create a captcha
+      $captchaTable = PluginFlyvemdmdemoCaptcha::getTable();
+      $DB->query("INSERT INTO `$captchaTable`
+                  (`ip_address`, `answer`)
+                  VALUES ('127.0.0.1', 'aaaaa')");
+      $captchaId = $DB->insert_id();
+
       $user = new PluginFlyvemdmdemoUser();
       $userId = $user->add(
           [
           'name'      => self::$registeredUser,
           'password'  => self::$registeredPass,
-          'password2' => self::$registeredPass
+          'password2' => self::$registeredPass,
+          '_plugin_flyvemdmdemo_captchas_id' => $captchaId,
+          '_answer' => 'aaaaa',
           ]
       );
 

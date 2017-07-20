@@ -535,7 +535,7 @@ class RoboFile extends Glpi\Tools\RoboFile
          case 'php':
             $prefix              = "\<\?php\\n/\*(\*)?\\n";
             $replacementPrefix   = "<?php\n/**\n";
-            $suffix              = "\\n( )?\*/";
+            $suffix              = "( )?\*/";
             $replacementSuffix   = "\n */";
             break;
 

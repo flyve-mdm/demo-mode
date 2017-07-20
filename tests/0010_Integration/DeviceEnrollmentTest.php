@@ -62,6 +62,8 @@ class DeviceEnrollmentTest extends ApiRestTestCase
    protected static $entityId;
 
    public static function setupBeforeClass() {
+      global $DB;
+
       parent::setupBeforeClass();
 
       Config::setConfigurationValues(
@@ -85,12 +87,22 @@ class DeviceEnrollmentTest extends ApiRestTestCase
       self::$registeredUser = 'johndoe@localhost.local';
       self::$registeredPass = 'password';
 
+      // create a captcha
+      $captchaTable = PluginFlyvemdmdemoCaptcha::getTable();
+      $DB->query("INSERT INTO `$captchaTable`
+                  (`ip_address`, `answer`)
+                  VALUES ('127.0.0.1', 'aaaaa')");
+      $captchaId = $DB->insert_id();
+
+      // Create the user
       $user = new PluginFlyvemdmdemoUser();
       $user->add(
           [
-          'name'      => self::$registeredUser,
-          'password'  => self::$registeredPass,
-          'password2' => self::$registeredPass,
+           'name'      => self::$registeredUser,
+           'password'  => self::$registeredPass,
+           'password2' => self::$registeredPass,
+           '_plugin_flyvemdmdemo_captchas_id' => $captchaId,
+           '_answer' => 'aaaaa',
           ]
       );
 
@@ -138,7 +150,7 @@ class DeviceEnrollmentTest extends ApiRestTestCase
       $this->assertLessThan(300, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
 
       // Check the registered user has the guest profile
-      $config = Config::getConfigurationValues('flyvemdm',  ['guest_profiles_id']);
+      $config = Config::getConfigurationValues('flyvemdm', ['guest_profiles_id']);
       $user = new User();
       $user->getFromDBbyEmail(self::$registeredUser, '');
       $profile = new Profile();
@@ -240,7 +252,12 @@ class DeviceEnrollmentTest extends ApiRestTestCase
     * @param PluginFlyvemdmInvitation $invitation
     */
    public function testRegisteredUserEnrollsSecondDevice($invitation) {
-      $headers = ['Session-Token' => self::$sessionToken];
+
+      $config = Config::getConfigurationValues('flyvemdm', ['guest_profiles_id']);
+      $this->changeActiveProfile(self::$sessionToken, $config['guest_profiles_id']);
+      $this->assertGreaterThanOrEqual(200, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+
+      $this->restResponse;
       $body = json_encode(
           [
           'input'     => [

@@ -163,14 +163,15 @@ class PluginFlyvemdmdemoInstaller {
       // create profile for service account (provides the API key allowing self account cezation for registered users)
       $profileId = self::getOrCreateProfile(
             self::SERVICE_PROFILE_NAME,
-            __('service Flyve MDM user\'s profile. Created by Flyve MDM - do NOT modify this comment.', 'flyvemdmdemo')
-            );
+         __('service Flyve MDM user\'s profile. Created by Flyve MDM - do NOT modify this comment.', 'flyvemdmdemo')
+      );
       Config::setConfigurationValues('flyvemdmdemo', array('service_profiles_id' => $profileId));
       $profileRight = new ProfileRight();
       $profileRight->updateProfileRights($profileId, array(
-            Entity::$rightname                     => CREATE | UPDATE,
-            User::$rightname                       => CREATE,
-            Profile::$rightname                    => READ
+         Entity::$rightname                     => CREATE | UPDATE,
+         User::$rightname                       => CREATE,
+         Profile::$rightname                    => READ,
+         PluginFlyvemdmdemoCaptcha::$rightname  => CREATE | READ
       ));
    }
 
@@ -180,9 +181,9 @@ class PluginFlyvemdmdemoInstaller {
    protected function createInactiveRegisteredProfileAccess() {
       // create profile for registered users
       $profileId = self::getOrCreateProfile(
-            __("Flyve MDM inactive registered users", "flyvemdmdemo"),
-            __("inactive registered FlyveMDM users. Created by Flyve MDM - do NOT modify this comment.", "flyvemdmdemo")
-            );
+         __("Flyve MDM inactive registered users", "flyvemdmdemo"),
+         __("inactive registered Flyve MDM users. Created by Flyve MDM - do NOT modify this comment.", "flyvemdmdemo")
+      );
       Config::setConfigurationValues('flyvemdmdemo', array('inactive_registered_profiles_id' => $profileId));
    }
 
@@ -192,39 +193,39 @@ class PluginFlyvemdmdemoInstaller {
    protected function createRegisteredProfileAccess() {
       // create profile for registered users
       $profileId = self::getOrCreateProfile(
-            __('Flyve MDM registered users', 'flyvemdmdemo'),
-            __('registered Flyve MDM users. Created by Flyve MDM - do NOT modify this comment.', 'flyvemdmdemo')
+         __('Flyve MDM registered users', 'flyvemdmdemo'),
+         __('registered Flyve MDM users. Created by Flyve MDM - do NOT modify this comment.', 'flyvemdmdemo')
       );
       Config::setConfigurationValues('flyvemdmdemo', array('registered_profiles_id' => $profileId));
       $profileRight = new ProfileRight();
       $profileRight->updateProfileRights($profileId, array(
-            PluginFlyvemdmAgent::$rightname           => READ | UPDATE | DELETE | PURGE | READNOTE | UPDATENOTE, // No create right
-            PluginFlyvemdmInvitation::$rightname      => ALLSTANDARDRIGHT,
-            PluginFlyvemdmFleet::$rightname           => ALLSTANDARDRIGHT | READNOTE | UPDATENOTE,
-            PluginFlyvemdmPackage::$rightname         => ALLSTANDARDRIGHT | READNOTE | UPDATENOTE,
-            PluginFlyvemdmFile::$rightname            => ALLSTANDARDRIGHT | READNOTE | UPDATENOTE,
-            PluginFlyvemdmGeolocation::$rightname     => READ | PURGE,
-            PluginFlyvemdmWellknownpath::$rightname   => READ,
-            PluginFlyvemdmPolicy::$rightname          => READ,
-            PluginFlyvemdmPolicyCategory::$rightname  => READ,
-            PluginFlyvemdmProfile::$rightname         => PluginFlyvemdmProfile::RIGHT_FLYVEMDM_USE,
-            PluginFlyvemdmEntityconfig::$rightname    => READ
-                                                         | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_APP_DOWNLOAD_URL
-                                                         | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_INVITATION_TOKEN_LIFE,
-            PluginFlyvemdmInvitationlog::$rightname   => READ,
-            Config::$rightname                        => READ,
-            User::$rightname                          => ALLSTANDARDRIGHT,
-            Profile::$rightname                       => CREATE,
-            Entity::$rightname                        => CREATE,
-            Computer::$rightname                      => READ,
-            Software::$rightname                      => READ,
-            NetworkPort::$rightname                   => READ,
-            CommonDropdown::$rightname                => READ,
+         PluginFlyvemdmAgent::$rightname           => READ | UPDATE | DELETE | PURGE | READNOTE | UPDATENOTE, // No create right
+         PluginFlyvemdmInvitation::$rightname      => ALLSTANDARDRIGHT,
+         PluginFlyvemdmFleet::$rightname           => ALLSTANDARDRIGHT | READNOTE | UPDATENOTE,
+         PluginFlyvemdmPackage::$rightname         => ALLSTANDARDRIGHT | READNOTE | UPDATENOTE,
+         PluginFlyvemdmFile::$rightname            => ALLSTANDARDRIGHT | READNOTE | UPDATENOTE,
+         PluginFlyvemdmGeolocation::$rightname     => READ | PURGE,
+         PluginFlyvemdmWellknownpath::$rightname   => READ,
+         PluginFlyvemdmPolicy::$rightname          => READ,
+         PluginFlyvemdmPolicyCategory::$rightname  => READ,
+         PluginFlyvemdmProfile::$rightname         => PluginFlyvemdmProfile::RIGHT_FLYVEMDM_USE,
+         PluginFlyvemdmEntityconfig::$rightname    => READ
+                                                      | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_APP_DOWNLOAD_URL
+                                                      | PluginFlyvemdmEntityconfig::RIGHT_FLYVEMDM_INVITATION_TOKEN_LIFE,
+         PluginFlyvemdmInvitationlog::$rightname   => READ,
+         Config::$rightname                        => READ,
+         User::$rightname                          => ALLSTANDARDRIGHT,
+         Profile::$rightname                       => CREATE,
+         Entity::$rightname                        => CREATE,
+         Computer::$rightname                      => READ,
+         Software::$rightname                      => READ,
+         NetworkPort::$rightname                   => READ,
+         CommonDropdown::$rightname                => READ,
       ));
       $profile = new Profile();
       $profile->update([
-            'id'                 => $profileId,
-            '_password_update'   => 1
+         'id'                 => $profileId,
+         '_password_update'   => 1
       ]);
    }
 
@@ -241,12 +242,12 @@ class PluginFlyvemdmdemoInstaller {
 
       if (!$user->getIdByName(PluginFlyvemdmdemoConfig::SERVICE_ACCOUNT_NAME)) {
          if (!$user->add([
-               'name'            => PluginFlyvemdmdemoConfig::SERVICE_ACCOUNT_NAME,
-               'comment'         => 'Flyve MDM service account',
-               'firstname'       => 'Plugin Flyve MDM demo',
-               'password'        => '42',
-               '_profiles_id'    => $profile->getID(),
-               'is_active'       => '0',
+            'name'            => PluginFlyvemdmdemoConfig::SERVICE_ACCOUNT_NAME,
+            'comment'         => 'Flyve MDM service account',
+            'firstname'       => 'Plugin Flyve MDM demo',
+            'password'        => '42',
+            '_profiles_id'    => $profile->getID(),
+            'is_active'       => '0',
          ])) {
             die ('Could not create the service account');
          }
@@ -448,23 +449,29 @@ class PluginFlyvemdmdemoInstaller {
    }
 
    protected function createJobs() {
-      CronTask::Register('PluginFlyvemdmdemoAccountvalidation', 'CleanupAccountActivation', 12 * HOUR_TIMESTAMP,
-            array(
-                  'comment'   => __('Remove expired account activations (demo mode)', 'flyvemdmdemo'),
-                  'mode'      => CronTask::MODE_EXTERNAL
-            ));
+      CronTask::Register(PluginFlyvemdmdemoAccountvalidation::class, 'CleanupAccountActivation', 12 * HOUR_TIMESTAMP,
+         [
+               'comment'   => __('Remove expired account activations (demo mode)', 'flyvemdmdemo'),
+               'mode'      => CronTask::MODE_EXTERNAL
+         ]);
 
-      CronTask::Register('PluginFlyvemdmdemoAccountvalidation', 'DisableExpiredTrial', 12 * HOUR_TIMESTAMP,
-            array(
-                  'comment'   => __('Disable expired accounts (demo mode)', 'flyvemdmdemo'),
-                  'mode'      => CronTask::MODE_EXTERNAL
-            ));
+      CronTask::Register(PluginFlyvemdmdemoAccountvalidation::class, 'DisableExpiredTrial', 12 * HOUR_TIMESTAMP,
+         [
+               'comment'   => __('Disable expired accounts (demo mode)', 'flyvemdmdemo'),
+               'mode'      => CronTask::MODE_EXTERNAL
+         ]);
 
-      CronTask::Register('PluginFlyvemdmdemoAccountvalidation', 'RemindTrialExpiration', 12 * HOUR_TIMESTAMP,
-            array(
-                  'comment'   => __('Remind imminent end of trial period (demo mode)', 'flyvemdmdemo'),
-                  'mode'      => CronTask::MODE_EXTERNAL
-            ));
+      CronTask::Register(PluginFlyvemdmdemoAccountvalidation::class, 'RemindTrialExpiration', 12 * HOUR_TIMESTAMP,
+         [
+               'comment'   => __('Remind imminent end of trial period (demo mode)', 'flyvemdmdemo'),
+               'mode'      => CronTask::MODE_EXTERNAL
+         ]);
+
+      CronTask::Register(PluginFlyvemdmdemoCaptcha::class, 'Cleanup', 1 * HOUR_TIMESTAMP,
+         [
+            'comment'   => __('Cleanup old captchas (demo mode)', 'flyvemdmdemo'),
+            'mode'      => CronTask::MODE_EXTERNAL
+         ]);
    }
 
    public function createNotificationTargetAccountvalidation() {

@@ -42,7 +42,7 @@ define('PLUGIN_FLYVEMDMDEMO_PHP_MIN_VERSION', '5.5');
 
 // Init the hooks of the plugins -Needed
 function plugin_init_flyvemdmdemo() {
-    global $PLUGIN_HOOKS, $CFG_GLPI;
+    global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['flyvemdmdemo'] = true;
 
@@ -51,33 +51,52 @@ function plugin_init_flyvemdmdemo() {
    if ($plugin->isActivated('flyvemdmdemo')) {
       include_once __DIR__ . '/vendor/autoload.php';
 
-      $PLUGIN_HOOKS['post_init']['flyvemdmdemo']                = 'plugin_flyvemdmdemo_postinit';
-
-      // Notifications
-      $PLUGIN_HOOKS['item_get_events']['flyvemdmdemo'] =
-          array('PluginFlyvemdmdemoNotificationTargetAccountvalidation' => array('PluginFlyvemdmdemoNotificationTargetAccountvalidation', 'addEvents'));
-      $PLUGIN_HOOKS['item_get_datas']['flyvemdmdemo'] =
-          array('PluginFlyvemdmdemoNotificationTargetAccountvalidation' => array('PluginFlyvemdmdemoNotificationTargetAccountvalidation', 'getAdditionalDatasForTemplate'));
-
-      Plugin::registerClass(
-          'PluginFlyvemdmdemoAccountvalidation', array(
-          'notificationtemplates_types' => true, // 'document_types' => true
-          )
-      );
-
-      if (Session::haveRight(PluginFlyvemdmProfile::$rightname, PluginFlyvemdmProfile::RIGHT_FLYVEMDM_USE)) {
-            $PLUGIN_HOOKS['config_page']['flyvemdmdemo'] = 'front/config.form.php';
-      }
-
-      // Hooks for the plugin : objects inherited from GLPI or
-      $PLUGIN_HOOKS['pre_item_add']['flyvemdmdemo']     = array(
-          'User'                  => 'plugin_flyvemdmdemo_hook_pre_entity_add',
-      );
-
-      $PLUGIN_HOOKS['pre_item_purge']['flyvemdmdemo']   = array(
-          'PluginFlyvemdmFleet'   => 'plugin_flyvemdmdemo_pre_fleet_purge',
-      );
+      plugin_flyvemdmdemo_registerClasses();
+      plugin_flyvemdmdemo_addHooks();
    }
+}
+
+function plugin_flyvemdmdemo_registerClasses() {
+   Plugin::registerClass(
+      PluginFlyvemdmdemoAccountvalidation::class, [
+         'notificationtemplates_types' => true, // 'document_types' => true
+      ]
+   );
+
+   Plugin::registerClass(PluginFlyvemdmdemoProfile::class,
+      ['addtabon' => Profile::class]);
+}
+
+function plugin_flyvemdmdemo_addHooks() {
+   global $PLUGIN_HOOKS;
+
+   $PLUGIN_HOOKS['post_init']['flyvemdmdemo'] = 'plugin_flyvemdmdemo_postinit';
+
+   // Notifications
+   $PLUGIN_HOOKS['item_get_events']['flyvemdmdemo'] =
+      [PluginFlyvemdmdemoNotificationTargetAccountvalidation::class =>
+         [PluginFlyvemdmdemoNotificationTargetAccountvalidation::class, 'addEvents']];
+   $PLUGIN_HOOKS['item_get_datas']['flyvemdmdemo'] =
+      [PluginFlyvemdmdemoNotificationTargetAccountvalidation::class =>
+         [PluginFlyvemdmdemoNotificationTargetAccountvalidation::class, 'getAdditionalDatasForTemplate']];
+
+   if (Session::haveRight(PluginFlyvemdmProfile::$rightname, PluginFlyvemdmProfile::RIGHT_FLYVEMDM_USE)) {
+      $PLUGIN_HOOKS['config_page']['flyvemdmdemo'] = 'front/config.form.php';
+   }
+
+   // Hooks for the plugin : objects inherited from GLPI
+   $PLUGIN_HOOKS['pre_item_add']['flyvemdmdemo']     = [
+      User::class => 'plugin_flyvemdmdemo_hook_pre_entity_add',
+   ];
+
+   $PLUGIN_HOOKS['pre_item_purge']['flyvemdmdemo']   = [
+      PluginFlyvemdmFleet::class => 'plugin_flyvemdmdemo_pre_fleet_purge',
+   ];
+
+   $PLUGIN_HOOKS['item_purge']['flyvemdm']   = [
+      User::class => [PluginFlyvemdmDemoUser::class, 'hook_pre_user_purge'],
+   ];
+
 }
 
 // Get the name and the version of the plugin - Needed
@@ -89,7 +108,7 @@ function plugin_version_flyvemdmdemo() {
       $glpiVersion = PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION;
    }
    return [
-      'name'           => __s('Flyve MDM Demo', "flyvemdmdemo"),
+      'name'           => __s('Flyve MDM Demo', 'flyvemdmdemo'),
       'version'        => PLUGIN_FLYVEMDMDEMO_VERSION,
       'author'         => $author,
       'license'        => 'AGPLv3+',

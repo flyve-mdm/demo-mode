@@ -84,6 +84,10 @@ class PluginInstallTest extends CommonTestCase
 
       // Check cron jobs
       $crontask = new CronTask();
+      $this->assertGreaterThan(0, $crontask->getFromDBbyName(PluginFlyvemdmdemoAccountvalidation::class, 'CleanupAccountActivation'));
+      $this->assertGreaterThan(0, $crontask->getFromDBbyName(PluginFlyvemdmdemoAccountvalidation::class, 'DisableExpiredTrial'));
+      $this->assertGreaterThan(0, $crontask->getFromDBbyName(PluginFlyvemdmdemoAccountvalidation::class, 'RemindTrialExpiration'));
+      $this->assertGreaterThan(0, $crontask->getFromDBbyName(PluginFlyvemdmdemoCaptcha::class, 'Cleanup'));
 
       // Enable the plugin
       $plugin->activate($plugin->fields['id']);
