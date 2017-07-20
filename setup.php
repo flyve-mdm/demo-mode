@@ -84,10 +84,10 @@ function plugin_init_flyvemdmdemo() {
 // Get the name and the version of the plugin - Needed
 function plugin_version_flyvemdmdemo() {
    $author = "<a href='http://www.teclib.com'>Teclib</a>";
-   if (defined('GLPI_PREVER') && PLUGIN_FLYVEMDM_IS_OFFICIAL_RELEASE == false) {
-      $glpiVersion = version_compare(GLPI_PREVER, PLUGIN_FLYVEMDM_GLPI_MIN_VERSION, 'lt');
+   if (defined('GLPI_PREVER') && PLUGIN_FLYVEMDMDEMO_IS_OFFICIAL_RELEASE == false) {
+      $glpiVersion = version_compare(GLPI_PREVER, PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION, 'lt');
    } else {
-      $glpiVersion = PLUGIN_FLYVEMDM_GLPI_MIN_VERSION;
+      $glpiVersion = PLUGIN_FLYVEMDMDEMO_GLPI_MIN_VERSION;
    }
    return [
       'name'           => __s('Flyve Mobile Device Management Demo', "flyvemdmdemo"),
