@@ -50,7 +50,19 @@ function plugin_flyvemdmdemo_update_to_dev(Migration $migration) {
                   PRIMARY KEY (`id`),
                   INDEX `users_id` (`users_id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-      $DB->query($query) or die("Could not create invitation logs table " . $DB->error());
+      $DB->query($query) or die("Could not create newsletter subscriptions table " . $DB->error());
+   }
+
+   $table = PluginFlyvemdmdemoCaptcha::getTable();
+   if (!$DB->tableExists($table)) {
+      $query = "CREATE TABLE `glpi_plugin_flyvemdmdemo_captchas` (
+               `id`                                int(11)                  NOT NULL AUTO_INCREMENT,
+               `ip_address`                        varchar(45)              DEFAULT NULL,
+               `answer`                            varchar(255)             DEFAULT NULL,
+               PRIMARY KEY (`id`),
+               INDEX `ip_address` (`ip_address`)
+             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+      $DB->query($query) or die("Could not create captcha table " . $DB->error());
    }
 
    $migration->setVersion(PLUGIN_FLYVEMDMDEMO_VERSION);
