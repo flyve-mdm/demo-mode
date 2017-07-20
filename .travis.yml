@@ -6,6 +6,10 @@ env:
     - FUSION_SOURCE="https://github.com/fusioninventory/fusioninventory-for-glpi -b master" 
     - FLYVEMDM_SOURCE="https://github.com/flyve-mdm/flyve-mdm-glpi-plugin -b develop"
   
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 before_script:
   - if [[ "$HASXDBG" -ne "false" ]]; then phpenv config-rm xdebug.ini; fi
   - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
