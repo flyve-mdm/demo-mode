@@ -1,0 +1,29 @@
+{
+    "name": "@teclib/flyve-mdm-glpi-demo",
+    "version": "2.0.0-dev",
+    "description": "Flyve MDM Demo plugin for GLPI",
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "release": "standard-version --sign --message 'chore(release): bump to %s and new changelog'"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/flyve-mdm/flyve-mdm-glpi-demo.git"
+    },
+    "keywords": [
+        "glpi",
+        "flyve",
+        "mdm"
+    ],
+    "author": "Thierry Bugier Pineau <tbugier@teclib.com> (https://flyve-mdm.com/)",
+    "license": "AGPL-3.0",
+    "bugs": {
+        "url": "https://github.com/flyve-mdm/flyve-mdm-glpi-demo/issues"
+    },
+    "homepage": "https://github.com/flyve-mdm/flyve-mdm-glpi-demo#readme",
+    "devDependencies": {
+        "standard-version": "^4.0.0"
+    }
+}
