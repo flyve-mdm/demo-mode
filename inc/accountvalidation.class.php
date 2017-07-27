@@ -199,14 +199,43 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
           )
       );
 
+      // Activate the account
+      if (!$this->activateAccount()) {
+         return false;
+      }
+
+      // Set trial expiration date
+      $input['validation_pass']  = '';
+      $endTrialDateTime = $currentDateTime->add(new DateInterval('P' . $this->getTrialDuration() . 'D'));
+      $input['date_end_trial'] = $endTrialDateTime->format('Y-m-d H:i:s');
+
+      return $input;
+   }
+
+   /**
+    * activate a user account by adding registered user profile and remiving inactive registered profile
+    *
+    * @return boolean
+    */
+   private function activateAccount() {
+      if ($this->isNewItem()) {
+         return false;
+      }
+
+      $config = Config::getConfigurationValues(
+         'flyvemdmdemo',
+         ['inactive_registered_profiles_id']
+      );
+
+      // Find the user_profile entry
       $userId     = $this->fields['users_id'];
       $profileId  = $config['inactive_registered_profiles_id'];
       $entityId   = $this->fields['assigned_entities_id'];
       $profile_user = new Profile_User();
       $profile_user->getFromDBByQuery(
-          "WHERE `users_id` = '$userId'
-                                       AND `profiles_id` = '$profileId'
-                                       AND `entities_id` = '$entityId'"
+         "WHERE `users_id` = '$userId'
+          AND `profiles_id` = '$profileId'
+          AND `entities_id` = '$entityId'"
       );
       if ($profile_user->isNewItem()) {
          Session::addMessageAfterRedirect(__('Failed to find your account', 'flyvemdmdemo'));
@@ -214,30 +243,17 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
       }
 
       $profile_user2 = new Profile_User();
-      if ($profile_user2->add(
-          array(
-          'users_id'     => $userId,
-          'profiles_id'  => $this->fields['profiles_id'],
-          'entities_id'  => $entityId,
-          'is_recursive' => $profile_user->getField('is_recursive'),
-          )
-      )
+      if ($profile_user2->add([
+            'users_id'     => $userId,
+            'profiles_id'  => $this->fields['profiles_id'],
+            'entities_id'  => $entityId,
+            'is_recursive' => $profile_user->getField('is_recursive'),
+         ])
       ) {
          // If add succeeded, then delete inactive profile
-         $profile_user->delete(
-             array(
-             'id'        => $profile_user->getID(),
-             )
-         );
+         $profile_user->delete(['id' => $profile_user->getID()]);
       }
-
-      $config = Config::getConfigurationValues('flyvemdmdemo', array('inactive_registered_profiles_id'));
-
-      $input['validation_pass']  = '';
-      $endTrialDateTime = $currentDateTime->add(new DateInterval('P' . $this->getTrialDuration() . 'D'));
-      $input['date_end_trial'] = $endTrialDateTime->format('Y-m-d H:i:s');
-
-      return $input;
+      return true;
    }
 
     /**
@@ -254,10 +270,14 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
          return false;
       }
 
-      if (isset($_SESSION['glpiID'])) {
-         if ($_SESSION['glpiactiveprofile']['id'] == $serviceProfileId) {
-            return $this->validateForRegisteredUser($input);
-         }
+      //if (isset($_SESSION['glpiID'])) {
+         //if ($_SESSION['glpiactiveprofile']['id'] == $serviceProfileId) {
+            //return $this->validateForRegisteredUser($input);
+         //}
+      //}
+
+      if (isset($input['_validate'])) {
+         return $this->validateForRegisteredUser($input);
       }
 
       return $input;

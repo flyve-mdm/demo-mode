@@ -155,9 +155,6 @@ class PluginFlyvemdmdemoUser extends User
           )
       );
 
-      $accountValidation = new PluginFlyvemdmdemoAccountvalidation();
-      $demoMode = $accountValidation->isDemoEnabled();
-
       $registeredProfileId = $config['inactive_registered_profiles_id'];
       if (!isset($config['registered_profiles_id'])) {
          Session::addMessageAfterRedirect(__('No inactive profile available to setup user rights', 'flyvemdmdemo'));
@@ -304,9 +301,7 @@ class PluginFlyvemdmdemoUser extends User
 
             // If demo mode enabled, send an activation email
             $accountValidation = new PluginFlyvemdmdemoAccountvalidation();
-            $demoMode = $accountValidation->isDemoEnabled();
-
-            if ($demoMode) {
+            if ($accountValidation->isDemoEnabled()) {
                $config = Config::getConfigurationValues(
                    'flyvemdmdemo', array(
                    'registered_profiles_id',

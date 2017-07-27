@@ -64,6 +64,14 @@ class DeviceEnrollmentTest extends ApiRestTestCase
    public static function setupBeforeClass() {
       parent::setupBeforeClass();
 
+      Config::setConfigurationValues(
+          'flyvemdmdemo', [
+          'demo_mode'       => 1,
+          'webapp_url'      => 'https://localhost',
+          'demo_time_limit' => '0',
+          ]
+      );
+
       self::login('glpi', 'glpi');
       $user = new User();
       $user->getFromDBbyName(PluginFlyvemdmdemoConfig::SERVICE_ACCOUNT_NAME);
@@ -86,13 +94,13 @@ class DeviceEnrollmentTest extends ApiRestTestCase
           ]
       );
 
-      config::setConfigurationValues(
-          'flyvemdmdemo', [
-          'demo_mode'       => 1,
-          'webapp_url'      => 'https://localhost',
-          'demo_time_limit' => '0',
-          ]
-      );
+      $validation = new PluginFlyvemdmdemoAccountvalidation();
+      $validation->getFromDBByCrit(['users_id' => $user->getID()]);
+      $validation->update([
+         'id'        => $validation->getID(),
+         '_validate' => $validation->getField('validation_pass'),
+      ]);
+
    }
 
     /**
@@ -121,13 +129,16 @@ class DeviceEnrollmentTest extends ApiRestTestCase
           ]
       );
 
+      $this->getFullSession(self::$sessionToken);
+      $this->restResponse = $this->restResponse;
+
       $this->invitation('post', self::$sessionToken, $body);
 
       $this->assertGreaterThanOrEqual(200, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
       $this->assertLessThan(300, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
 
-      // Check the registered user has the  guest profile
-      $config = Config::getConfigurationValues("flyvemdm", array('guest_profiles_id'));
+      // Check the registered user has the guest profile
+      $config = Config::getConfigurationValues('flyvemdm',  ['guest_profiles_id']);
       $user = new User();
       $user->getFromDBbyEmail(self::$registeredUser, '');
       $profile = new Profile();

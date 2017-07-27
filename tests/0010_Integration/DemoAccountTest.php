@@ -428,6 +428,29 @@ class DemoAccountTest extends ApiRestTestCase
       );
    }
 
+   /**
+    * @depends testCreateDemoUser
+    */
+   public function testActivateAccountWithBadProfile($userId) {
+      $this->initSessionByCredentials('glpi', 'glpi');
+      $this->assertEquals(200, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+
+      $accountValidation = $this->getAccountValidation($userId);
+      $headers = ['Session-Token' => $this->restResponse['session_token']];
+      $body = json_encode(
+         [
+            'input'     => [
+               'id'            => $accountValidation->getID(),
+               '_validate'    => $accountValidation->getField('validation_pass') . "ab",
+            ],
+         ]
+      );
+      $this->emulateRestRequest('put', 'PluginFlyvemdmdemoAccountValidation', $headers, $body);
+
+      // Request should fail due to bad profile
+      $this->assertGreaterThanOrEqual(400, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
+   }
+
     /**
     * @depends testInitGetServiceSessionToken
     * @depends testCreateDemoUser
@@ -445,7 +468,7 @@ class DemoAccountTest extends ApiRestTestCase
       );
       $this->emulateRestRequest('put', 'PluginFlyvemdmdemoAccountValidation', $headers, $body);
 
-      // Request should faile due to bad validation pass
+      // Request should fail due to bad validation pass
       $this->assertGreaterThanOrEqual(400, $this->restHttpCode, json_encode($this->restResponse, JSON_PRETTY_PRINT));
 
       // Check the user has only inactive registered user profile
