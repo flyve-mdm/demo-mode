@@ -148,7 +148,7 @@ class PluginFlyvemdmdemoConfig extends CommonDBTM
          if ($input['demo_mode'] != '0'
              && (!isset($input['webapp_url']) || empty($input['webapp_url']))
          ) {
-            Session::addMessageAfterRedirect(__('To enable the demo mode, you must provide the webapp URL !', 'flyvemdmdemo', false, ERROR));
+            Session::addMessageAfterRedirect(__('To enable the demo mode, you must provide the webapp URL !', 'flyvemdmdemo'), false, ERROR);
             unset($input['demo_mode']);
          } else {
             $config = new static();
