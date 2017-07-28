@@ -517,7 +517,7 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
       return $this->reminderDelays[$notificationId];
    }
 
- /**
+   /**
     * Return the column name of the sent flag for each reminder
     *
     * @param string $notificationId

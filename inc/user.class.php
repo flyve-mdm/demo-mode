@@ -146,23 +146,7 @@ class PluginFlyvemdmdemoUser extends User
          return false;
       }
 
-      if (!isset($input['_plugin_flyvemdmdemo_captchas_id'])
-          || !isset($input['_answer'])) {
-         // captcha and his answer are mandatory
-         Session::addMessageAfterRedirect(__('Turing test not specified', 'flyvemdmdemo'));
-         return false;
-      }
-
-      $captcha = new PluginFlyvemdmdemoCaptcha();
-      $captcha->getFromDB((int) $input['_plugin_flyvemdmdemo_captchas_id']);
-      if ($captcha->isNewItem() && !$captcha->canViewItem()) {
-         // Captcha not found
-         Session::addMessageAfterRedirect(__('Turing test not found', 'flyvemdmdemo'));
-         return false;
-      }
-
-      if (!$captcha->challengeAnswer($input['_answer'])) {
-         Session::addMessageAfterRedirect(__('Turing test failed', 'flyvemdmdemo'));
+      if (!$this->checkCaptcha($input)) {
          return false;
       }
 
@@ -238,12 +222,35 @@ class PluginFlyvemdmdemoUser extends User
          return false;
       }
 
-      if (strlen($input['password']) < 8) {
-         Session::addMessageAfterRedirect(__('Password too short', 'flyvemdmdemo'));
+      if (!Config::validatePassword($input["password"])) {
          return false;
       }
 
       return $input;
+   }
+
+   protected function checkCaptcha($input) {
+      if (!isset($input['_plugin_flyvemdmdemo_captchas_id'])
+          || !isset($input['_answer'])) {
+         // captcha and his answer are mandatory
+         Session::addMessageAfterRedirect(__('Turing test not specified', 'flyvemdmdemo'));
+         return false;
+      }
+
+      $captcha = new PluginFlyvemdmdemoCaptcha();
+      $captcha->getFromDB((int) $input['_plugin_flyvemdmdemo_captchas_id']);
+      if ($captcha->isNewItem() && !$captcha->canViewItem()) {
+         // Captcha not found
+         Session::addMessageAfterRedirect(__('Turing test not found', 'flyvemdmdemo'));
+         return false;
+      }
+
+      if (!$captcha->challengeAnswer($input['_answer'])) {
+         Session::addMessageAfterRedirect(__('Turing test failed', 'flyvemdmdemo'));
+         return false;
+      }
+
+      return true;
    }
 
     /**
@@ -252,16 +259,16 @@ class PluginFlyvemdmdemoUser extends User
     * @see User::post_addItem()
     */
    public function post_addItem() {
+
       // add emails (use _useremails set from UI, not _emails set from LDAP)
       if (isset($this->input['_useremails']) && count($this->input['_useremails'])) {
          $useremail = new UserEmail();
          foreach ($this->input['_useremails'] as $id => $email) {
             $email = trim($email);
-            $email_input = array('email'    => $email,
-                             'users_id' => $this->getID());
+            $email_input = ['email'    => $email,
+                            'users_id' => $this->getID()];
             if (isset($this->input['_default_email'])
-                && ($this->input['_default_email'] == $id)
-            ) {
+                && ($this->input['_default_email'] == $id)) {
                $email_input['is_default'] = 1;
             } else {
                $email_input['is_default'] = 0;
@@ -278,14 +285,13 @@ class PluginFlyvemdmdemoUser extends User
       //add picture in user fields
       if (!empty($picture)) {
          $this->update(
-             array('id'      => $this->fields['id'],
-             'picture' => $picture)
-         );
+             ['id'      => $this->fields['id'],
+              'picture' => $picture]);
       }
 
       // Add default profile
       if (!$rulesplayed) {
-         $affectation = array();
+         $affectation = [];
          if (isset($this->input['_profiles_id']) && $this->input['_profiles_id']) {
             $profile                   = $this->input['_profiles_id'];
             // Choosen in form, so not dynamic
