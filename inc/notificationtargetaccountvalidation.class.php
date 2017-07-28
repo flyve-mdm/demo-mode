@@ -62,10 +62,10 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
    public function getEvents() {
       return array(
             self::EVENT_SELF_REGISTRATION          => __('User registration', 'flyvemdmdemo'),
-            self::EVENT_TRIAL_BEGIN                => __('Start of trial period', 'flyuvemdmdemo'),
-            self::EVENT_TRIAL_EXPIRATION_REMIND_1  => __('First expiration reminder', 'flyuvemdmdemo'),
-            self::EVENT_TRIAL_EXPIRATION_REMIND_2  => __('Second expiration reminder', 'flyuvemdmdemo'),
-            self::EVENT_POST_TRIAL_REMIND          => __('post-trial reminder', 'flyuvemdmdemo'),
+            self::EVENT_TRIAL_BEGIN                => __('Start of trial period', 'flyvemdmdemo'),
+            self::EVENT_TRIAL_EXPIRATION_REMIND_1  => __('First expiration reminder', 'flyvemdmdemo'),
+            self::EVENT_TRIAL_EXPIRATION_REMIND_2  => __('Second expiration reminder', 'flyvemdmdemo'),
+            self::EVENT_POST_TRIAL_REMIND          => __('Post-trial reminder', 'flyvemdmdemo'),
       );
    }
 
