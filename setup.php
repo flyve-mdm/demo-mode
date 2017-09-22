@@ -48,6 +48,10 @@ function plugin_init_flyvemdmdemo() {
 
     $plugin = new Plugin();
 
+    if (!$plugin->isActivated('flyvemdm')) {
+       return;
+    }
+
    if ($plugin->isActivated('flyvemdmdemo')) {
       include_once __DIR__ . '/vendor/autoload.php';
 
@@ -141,7 +145,6 @@ function plugin_flyvemdmdemo_check_prerequisites() {
    return $prerequisitesSuccess;
 }
 
-// Uninstall process for plugin : need to return true if succeeded : may display messages or add to message after redirect
 function plugin_flyvemdmdemo_check_config() {
     return true;
 }
