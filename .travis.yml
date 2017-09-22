@@ -14,7 +14,6 @@ before_script:
   - if [[ "$HASXDBG" -ne "false" ]]; then phpenv config-rm xdebug.ini; fi
   - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
   - composer install --no-dev
-  - sed -e "s/return extension_loaded('mcrypt');/return false;/" -i vendor/ircmaxell/random-lib/lib/RandomLib/AbstractMcryptMixer.php
   - php tools/cliinstall.php --db=glpi-test --user=travis --tests
   - cp tests/config_db.php config/config_db.php
   - mkdir plugins/fusioninventory && git clone --depth=1 $FUSION_SOURCE plugins/fusioninventory
