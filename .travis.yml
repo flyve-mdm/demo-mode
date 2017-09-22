@@ -2,19 +2,24 @@ language: php
 
 env:
   global:
-    - GLPI_SOURCE="https://github.com/glpi-project/glpi -b master" 
+    - GLPI_SOURCE="https://github.com/glpi-project/glpi -b 9.2/bugfixes" 
     - FUSION_SOURCE="https://github.com/fusioninventory/fusioninventory-for-glpi -b master" 
     - FLYVEMDM_SOURCE="https://github.com/flyve-mdm/flyve-mdm-glpi-plugin -b develop"
-  
+    - secure: riqurLkD5HXiKdkjSZXipb4+2VhXIjV6yjex7z89eHYqVhK049k/qIuxX2nCCCB7BxVuA+2fjDXXgjH4XihYvIcwxepplbDEjzgTYp/dDmN/8w3v9GvNBrD5fiV68a98Wpdy9zfbGk5hcoabKGJdyYCAFzCqLYmMGo5JU52lV2v6FcjkmkogFEpcKkg6+eZvDdCuCMgKziXwXKG7mDENAZA3PlPMaTmQ+sNaCWyYPKYC08+TGRIP9sS+lTY78SW/gY06CgWeJ1cF/MSRf8g0payEl9B4BuVFt8eAk+QIhDxvfkUmjIMEciT9c3stwsLnZQW1P4AAsmAqpmdajoGPg8XY+ZmFNdvAkh9hbGzdIy50v+cKlNyi2w/ZC5iQg43fmC0YwoGLd225FI1gJQFMkQiMYj2mi1Ir0/QFfVM5G5VWALRGQs5CyGOl9MOy01QISkkuURHYGLw+7jCCZyYmfww5gFO4RFcjPDBpoQt8Ra3Lbq1IaWt/gd4eQWjoXqiUjkYQ5L0tHd2Na4DR9q7X72mPoswUucxRAusF1M883uxIVWJRGFVs3Sup6U8qnZxXrpWIN8fpAtO7NuTQoCF48AhIC32+i41Ab002AUQLij8r8GGVehprhgyTbqDtd7zXWuC04rWBwVmXLsYvvqcszY2INUz4/jPswvHuvpZraxI=
+    - DB=glpitest
+    
 cache:
   directories:
     - $HOME/.composer/cache
 
 before_script:
-  - if [[ "$HASXDBG" -ne "false" ]]; then phpenv config-rm xdebug.ini; fi
+  - mysql -u root -e 'create database $DB;'
+  - phpenv config-rm xdebug.ini || true
+  - rm -f composer.lock
+  - tests/config-composer.sh
   - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
   - composer install --no-dev
-  - php tools/cliinstall.php --db=glpi-test --user=travis --tests
+  - php tools/cliinstall.php --db=$DB --user=travis --tests
   - cp tests/config_db.php config/config_db.php
   - mkdir plugins/fusioninventory && git clone --depth=1 $FUSION_SOURCE plugins/fusioninventory
   - mkdir plugins/flyvemdm && git clone --depth=1 $FLYVEMDM_SOURCE plugins/flyvemdm
@@ -31,11 +36,10 @@ matrix:
     - php: 5.6
     - php: 7.0
     - php: 7.1
+    - php: 7.2
       env: CS=true
     - php: nightly
-      env: HASXDBG=false
   allow_failures:
-    - php: 7.1
     - php: nightly
   
 notifications:
