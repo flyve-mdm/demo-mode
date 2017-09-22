@@ -222,16 +222,17 @@ class DeviceEnrollmentTest extends ApiRestTestCase
 
       $body = json_encode(
           [
-          'input'     => [
-                'entities_id'        => self::$entityId,
-                '_email'             => self::$registeredUser,
-                '_invitation_token'  => $invitation->getField('invitation_token'),
-                '_serial'            => 'GHJK',
-                'csr'                => '',
-                'firstname'          => 'Registered',
-                'lastname'           => 'user',
-                'version'            => '1.0.0',
-          ],
+            'input'     => [
+               'entities_id'        => self::$entityId,
+               '_email'             => self::$registeredUser,
+               '_invitation_token'  => $invitation->getField('invitation_token'),
+               '_serial'            => 'GHJK',
+               'csr'                => '',
+               'firstname'          => 'Registered',
+               'lastname'           => 'user',
+               'version'            => '2.0.0',
+               'type'               => 'android',
+             ],
           ]
       );
 
@@ -261,15 +262,16 @@ class DeviceEnrollmentTest extends ApiRestTestCase
       $body = json_encode(
           [
           'input'     => [
-                'entities_id'        => self::$entityId,
-                '_email'             => self::$registeredUser,
-                '_invitation_token'  => $invitation->getField('invitation_token'),
-                '_serial'            => 'WXCV',
-                'csr'                => '',
-                'firstname'          => 'Registered',
-                'lastname'           => 'user',
-                'version'            => '1.0.0',
-          ],
+               'entities_id'        => self::$entityId,
+               '_email'             => self::$registeredUser,
+               '_invitation_token'  => $invitation->getField('invitation_token'),
+               '_serial'            => 'WXCV',
+               'csr'                => '',
+               'firstname'          => 'Registered',
+               'lastname'           => 'user',
+               'version'            => '2.0.0',
+               'type'               => 'android',
+             ],
           ]
       );
 

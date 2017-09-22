@@ -42,15 +42,15 @@ define('PLUGIN_FLYVEMDMDEMO_PHP_MIN_VERSION', '5.5');
 
 // Init the hooks of the plugins -Needed
 function plugin_init_flyvemdmdemo() {
-    global $PLUGIN_HOOKS;
+   global $PLUGIN_HOOKS;
 
-    $PLUGIN_HOOKS['csrf_compliant']['flyvemdmdemo'] = true;
+   $PLUGIN_HOOKS['csrf_compliant']['flyvemdmdemo'] = true;
 
-    $plugin = new Plugin();
+   $plugin = new Plugin();
 
-    if (!$plugin->isActivated('flyvemdm')) {
-       return;
-    }
+   if (!$plugin->isActivated('flyvemdm')) {
+      return;
+   }
 
    if ($plugin->isActivated('flyvemdmdemo')) {
       include_once __DIR__ . '/vendor/autoload.php';

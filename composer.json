@@ -28,7 +28,8 @@
     },
     "repositories" : [{
             "type" : "vcs",
-            "url" : "https://github.com/flyve-mdm/flyve-mdm-glpi-test"
+            "url" : "https://github.com/flyve-mdm/flyve-mdm-glpi-test",
+            "no-api": true
         }
     ]
 }
