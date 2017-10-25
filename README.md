@@ -1,5 +1,7 @@
 # Demo mode for Flyve MDM
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/flyve-mdm/flyve-mdm-glpi-demo.svg)](https://greenkeeper.io/)
+
 ![Flyve MDM banner](https://user-images.githubusercontent.com/663460/26935464-54267e9c-4c6c-11e7-86df-8cfa6658133e.png)
 
 [![License](https://img.shields.io/github/license/flyve-mdm/demo-mode.svg?&label=License)](https://github.com/flyve-mdm/demo-mode/blob/develop/LICENSE.md)
