@@ -2,15 +2,15 @@
 
 ![Flyve MDM banner](https://user-images.githubusercontent.com/663460/26935464-54267e9c-4c6c-11e7-86df-8cfa6658133e.png)
 
-[![License](https://img.shields.io/github/license/flyve-mdm/flyve-mdm-glpi-demo.svg?&label=License)](https://github.com/flyve-mdm/flyve-mdm-glpi-demo/blob/master/LICENSE.md)
+[![License](https://img.shields.io/github/license/flyve-mdm/demo-mode.svg?&label=License)](https://github.com/flyve-mdm/demo-mode/blob/develop/LICENSE.md)
 [![Follow twitter](https://img.shields.io/twitter/follow/FlyveMDM.svg?style=social&label=Twitter&style=flat-square)](https://twitter.com/FlyveMDM)
 [![Telegram Group](https://img.shields.io/badge/Telegram-Group-blue.svg)](https://t.me/flyvemdm)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-[![GitHub release](https://img.shields.io/github/release/flyve-mdm/flyve-mdm-glpi-demo.svg)](https://github.com/flyve-mdm/flyve-mdm-glpi-demo/releases)
+[![GitHub release](https://img.shields.io/github/release/flyve-mdm/demo-mode.svg)](https://github.com/flyve-mdm/demo-mode/releases)
 
 Flyve MDM is a Mobile device management software that enables you to secure and manage all the mobile devices of your business or family via a web-based console.
 
-To get started, check out <https://flyve-mdm.com/>!
+To get started, check out [Flyve MDM Website](https://flyve-mdm.com/)!
 
 ## Table of contents
 
@@ -31,7 +31,7 @@ This plugin for GLPI provides features required to setup a demo instance of Flyv
 
 | **Release channel** | **Beta channel** |
 |:---:|:---:|
-| [![Build Status](https://travis-ci.org/flyve-mdm/flyve-mdm-glpi-demo.svg?branch=master)](https://travis-ci.org/flyve-mdm/flyve-mdm-glpi-demo) | [![Build Status](https://travis-ci.org/flyve-mdm/flyve-mdm-glpi-demo.svg?branch=develop)](https://travis-ci.org/flyve-mdm/flyve-mdm-glpi-demo) |
+| [![Build Status](https://travis-ci.org/flyve-mdm/demo-mode.svg?branch=master)](https://travis-ci.org/flyve-mdm/demo-mode) | [![Build Status](https://travis-ci.org/flyve-mdm/demo-mode.svg?branch=develop)](https://travis-ci.org/flyve-mdm/demo-mode) |
 
 ## Installation
 
@@ -39,7 +39,7 @@ Install the plugin as a regular plugin for GLPI, and enable it.
 
 ### Configuration of the demo mode
 
-Open the configuration page of the plugin from the plugins page in GLPI. 
+Open the configuration page of the plugin from the plugins page in GLPI.
 
 Turn on the demo mode, and specify the Webapp URL the users can reach to manage their demo company.
 
@@ -47,23 +47,23 @@ Enable the setting Time limit to limit the lifetime of the demo accounts. After 
 
 ## Documentation
 
-We share long-form content about the project in the [wiki](https://github.com/flyve-mdm/flyve-mdm-glpi-demo/wiki).
+We share long-form content about the project on the [website](http://flyve.org/demo-mode/).
 
 ## Versioning
 
 In order to provide transparency on our release cycle and to maintain backward compatibility, Flyve MDM is maintained under [the Semantic Versioning guidelines](http://semver.org/). We are committed to following and complying with the rules, the best we can.
 
-See [the tags section of our GitHub project](http://github.com/flyve-mdm/flyve-mdm-glpi-demo/tags) for changelogs for each release version of Flyve MDM. Release announcement posts on [the official Teclib' blog](http://www.teclib-edition.com/en/communities/blog-posts/) contain summaries of the most noteworthy changes made in each release.
+See [the tags section of our GitHub project](http://github.com/flyve-mdm/demo-mode/tags) for changelogs for each release version of Flyve MDM. Release announcement posts on [the official Teclib' blog](http://www.teclib-edition.com/en/communities/blog-posts/) contain summaries of the most noteworthy changes made in each release.
 
 ## Contribute
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our
-guidelines for [contributing](./CONTRIBUTING.md) and then check out one of our issues in the [Issues Dashboard](https://github.com/flyve-mdm/flyve-mdm-glpi-demo/issues).
+guidelines for [contributing](./CONTRIBUTING.md) and then check out one of our issues in the [Issues Dashboard](https://github.com/flyve-mdm/demo-mode/issues).
 
 ## Contact
 
 For notices about major changes and general discussion of Flyve MDM development, subscribe to the [/r/FlyveMDM](http://www.reddit.com/r/FlyveMDM) subreddit.
-You can also chat with us via IRC in [#flyve-mdm on freenode](http://webchat.freenode.net/?channels=flyve-mdm]).
+You can also chat with us via IRC in [#flyve-mdm on freenode](http://webchat.freenode.net/?channels=flyve-mdm).
 Ping me @hectorerb in the IRC chatroom if you get stuck.
 
 ## Copying
