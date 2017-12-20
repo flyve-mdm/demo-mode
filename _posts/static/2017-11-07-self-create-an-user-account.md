@@ -1,9 +1,9 @@
 ---
 layout: post
-wiki: true
+howtos: true
 published: true
 title: Self create an user account
-permalink: wiki/self-create-account
+permalink: howtos/self-create-account
 description: Self create an user account
 ---
 ## Self create an user account requests
