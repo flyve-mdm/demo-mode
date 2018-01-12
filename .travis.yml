@@ -24,7 +24,8 @@ before_script:
   - mkdir plugins/fusioninventory && git clone --depth=1 $FUSION_SOURCE plugins/fusioninventory
   - mkdir plugins/flyvemdm && git clone --depth=1 $FLYVEMDM_SOURCE plugins/flyvemdm
   - cd plugins/flyvemdm && composer install --no-dev && cd ../..
-  - mv ../flyve-mdm-glpi-demo plugins/flyvemdmdemo
+  - IFS=/ read -a repo <<< $TRAVIS_REPO_SLUG
+  - mv ../${repo[1]} plugins/flyvemdmdemo
   - cd plugins/flyvemdmdemo && composer install -o
 
 script:
