@@ -12,13 +12,14 @@ description: Easy and simple
 1. Install Fusion Inventory
 1. Install Flyve MDM
 
-## Compatibility Matrix
+### Compatibility Matrix
 
 <table>
     <tr>
         <td style="width:150px">Flyve MDM</td>
-        <td style="width:100px">1.x.x</td>
+        <td style="width:100px" align="center">1.x.x</td>
         <td style="width:100px">2.0.0-dev</td>
+    </tr>
     <tr>
         <td>Flyve MDM Demo</td>
         <td align="center">-</td>
