@@ -4,24 +4,27 @@ howtos: true
 published: true
 title: Self create an user account
 permalink: howtos/self-create-account
-description: Self create an user account
+description: Requests to self create an user account
 ---
-## Self create an user account requests
+
+## Requests
 
 ### Obtaining a session token
-The dashboard must first acquire a session token issuing a request like this:
 
-The user_token is the token of the service account preconfigured in the dashboard
+The dashboard must first acquire a session token issuing a request like the following:
 
 ```
 GET http://api.domain.com/initSession?user_token=45erjbudklq5865sdkjhjks
 Content-Type: application/json
 ```
+
+The user_token is the token of the service account preconfigured in the dashboard. This token can be found in the Flyve MDM Demo configuration as **Service's API Token**.
+
 Note: **the header is required**
 
-Answer :
+Answer:
 
-```
+```json
 200 OK
 {
    "session_token": "83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"
@@ -37,9 +40,14 @@ Content-Type: application/json
 
 Answer if the request succeeds
 
-```
+```json
 200 OK
+{
+  "id": 3,
+  "message": ""
+}
 ```
+
 Answers if the request fails
 
 ```
@@ -50,8 +58,7 @@ Answers if the request fails
 401 Unauthorized
 ```
 
-
-Payload 
+Payload
 
 ```json
 {"input":
@@ -63,33 +70,33 @@ Payload
 
 Note: 2017-07-28 it seems GLPI misbehaves if input is empty.
 
-Retain in memory the ID of the captcha returned in the answer. 
+Retain in memory the ID of the captcha returned in the answer.
 
-It is possible to request new captchas before instanciating the user, in a quantity limit per period of time and per IP address. 
+It is possible to request new captchas before instanciating the user, in a quantity limit per period of time and per IP address.
 
 ### Get the captcha picture
 
 ```
-GET http://api.domain.com/PluginFlyvemdmdemoCaptcha/:id?user_token=45erjbudklq5865sdkjhjks
-Content-Type: application/json
+GET http://api.domain.com/PluginFlyvemdmdemoCaptcha/:id?alt=media
+Content-Type: application/octet-stream
 ```
 
 Payload
 
-A RAW picture stream (JPEG) to be presented to the user as a Turing test. 
+A RAW picture stream (JPEG) to be presented to the user as a Turing test.
 
 Note: The API consumer may provide a captcha refresh feature to allow the user to change the captcha if it is too hard. However generation limitation rate occurs.
 
 ### Instanciation of the user
 
-After a session token is acquired, the dashboard must create a user account. The property **_newsletter** must contain a non zero value to register the user in the newsletter.
+After a session token is acquired, the dashboard must create an user account. The property **_newsletter** must contain a non zero value to register the user in the newsletter.
 
 ```
 POST http://api.domain.com/PluginFlyvemdmdemoUser?session_token=83af7e620c83a50a18d3eac2f6ed05a3ca0bea62
 Content-Type: application/json
 ```
 
-Payload 
+Payload
 
 ```json
 {"input":
@@ -106,15 +113,16 @@ Payload
 }
 ```
 
-* *_plugin_flyvemdmdemo_captchas_id* id the captcha ID generated previously
+* *_plugin_flyvemdmdemo_captchas_id* the captcha ID generated previously
 * *_answer* is the answer to the captcha
 
-Answer :
+Answer:
 
-```
+```json
 200 OK
 {
-   "id": 19
+   "id": 19,
+   "message": ""
 }
 ```
 
@@ -124,14 +132,14 @@ On success the demo plugin created the user account, an entity for him, and a de
 
 The email contains a validation link to the dashboard. The dashboard "converts" the request from a HTTP GET verb to a HTTP PUT verb.
 
-The link in the email contains a validation ID and an associated valdiation token. The validation token is provided in the body of the request, the ID can be provided either in the URL, either in the body. Refer th GLPI's API documentation. 
+The link in the email contains a validation ID and an associated validation token. The validation token is provided in the body of the request, the ID can be provided either in the URL or in the body. Refer to the GLPI's API documentation.
 
 ```
 PUT http://api.domain.com/PluginFlyvemdmdemoAccountvalidation/4?session_token=83af7e620c83a50a18d3eac2f6ed05a3ca0bea62
 Content-Type: application/json
 ```
 
-Payload 
+Payload
 
 ```json
 {"input":
@@ -168,6 +176,7 @@ Answer if the request succeeds
 ```
 200 OK
 ```
+
 Answer if the request fails
 
 ```
