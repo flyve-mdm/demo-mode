@@ -6,25 +6,29 @@ title: How it works
 permalink: howtos/how-it-works
 description: What you should know
 ---
-Flyve MDM Plugin for GLPI integrates the outstanding features of Flyve MDM into the GLPI platform providing you security functionalities for your IT infrastructure.
 
-Flyve MDM secures all your devices, allowing you to manage your mobile fleet security policy with precision in order to protect sensitive company data stored on mobile devices.
+# Flyve MDM Demo
 
-For a period of 90 days, you will be able to implement the main functions of the plugin in your IT infrastructure.
+The Demo allows the self creation of accounts, since GLPI currently doesn't count with this feature, the endpoint required is one provided by the same demo, PluginFlyvemdmddemoUsers.
 
-## General Architecture of Flyve MDM plugin for GLPI
+## Captcha
 
-The Architecture of the GLPI Plugin is the following, the Mobile Device Management is composed of:
+At the moment of registering the user information a captcha must be provided, otherwise it won't allow the user registration.
 
-* an user interface server for the administrator
-* a backend server
-* a M2M server
-* an agent installed in the managed device
+To generate and display the captcha to the user, two different methods are used, first the HTTP Post and then the HTTP Get.
 
-The M2M protocol provides features to handle loss of connectivity and guarantee delivery of important messages in both directions. The agent takes control of the device to maintain a minimal connectivity with the backend server via the M2M protocol and execute requests from the backend.
+If the captcha is too complicated for the user, a new one can be requested with the same procedure through a refresh feature.
 
-The certificate delivery server needs a private key to complete its role. It must communicate only with the backend and no communication is allowed from internet or any other untrusted network. It must run on a distinct server from the backend, the M2M server and the web User Interface.
+## Account validation
 
-All communications must be TLS encrypted.
+Once the account is succesfully created, the user will receive an email to validate it.
 
-The M2M server is a gateway between the devices and the backend, providing some helpful features to handle the unstable connectivity with devices. These features are available in a messenging queue protocol.
+This validation has a time limit of 1 day, if the user doesn't confirm, its account will be removed from GLPI.
+
+When the validation is successful the profile is changed from Flyve MDM inactive registered users to Flyve MDM registered user.
+
+The user will have now access to both the Web Dashboard and the GLPI interface.
+
+## Demo account time limit
+
+If the trial period is enabled, after 90 days the demo accounts created will be disabled.
