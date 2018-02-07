@@ -190,7 +190,7 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
    }
 
    /**
-    * activate a user account by adding registered user profile and remiving inactive registered profile
+    * activate an user account by adding registered user profile and removing inactive registered profile
     *
     * @return boolean
     */
@@ -442,7 +442,7 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
    }
 
     /**
-    * Remove habilitation to an entity with a profile from a user
+    * Remove habilitation to an entity with a profile from an user
     *
     * @param integer $userId
     * @param integer $profileId
@@ -473,7 +473,7 @@ class PluginFlyvemdmdemoAccountvalidation extends CommonDBTM
    }
 
     /**
-    * Diable a trial user account
+    * Disable a trial user account
     *
     * @param integer $userId
     * @param integer $profileId

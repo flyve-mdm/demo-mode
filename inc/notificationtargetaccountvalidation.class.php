@@ -173,7 +173,7 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
     * Return all the targets for this notification
     * Values returned by this method are the ones for the alerts
     * Can be updated by implementing the getAdditionnalTargets() method
-    * Can be overwitten (like dbconnection)
+    * Can be overwritten (like dbconnection)
     *
     * @param $entity the entity on which the event is raised
     */

@@ -64,7 +64,7 @@ class PluginFlyvemdmdemoUser extends User
    }
 
     /**
-    * Return the table used to stor this object
+    * Return the table used to store this object
     *
     * @return string
     */
@@ -198,7 +198,7 @@ class PluginFlyvemdmdemoUser extends User
          return false;
       }
 
-      // Force $_SESSION to have rights to create a profile because the user is not loged in yet
+      // Force $_SESSION to have rights to create a profile because the user is not logged in yet
       $input = parent::prepareInputForAdd($input);
       if ($input === false) {
          return false;

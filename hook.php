@@ -55,7 +55,7 @@ function plugin_flyvemdmdemo_uninstall() {
 }
 
 /**
- * Second pass of initialization after all other initiaization of other plugins
+ * Second pass of initialization after all other initialization of other plugins
  * Also force inclusion of this file
  */
 function plugin_flyvemdmdemo_postinit() {

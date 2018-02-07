@@ -149,7 +149,7 @@ class PluginFlyvemdmdemoCaptcha extends CommonDBTM {
     *
     * @param $name : automatic action's name
     *
-    * @return arrray of information
+    * @return array of information
     **/
    static function cronInfo($name) {
 
@@ -161,7 +161,7 @@ class PluginFlyvemdmdemoCaptcha extends CommonDBTM {
    }
 
    /**
-    * Cron action on captchas : cleanup old captchas
+    * Cron action on captchas: cleanup old captchas
     *
     * @param CronTask $task for log, if NULL display (default NULL)
     *

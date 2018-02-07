@@ -160,7 +160,7 @@ class PluginFlyvemdmdemoInstaller {
    }
 
    protected function createServiceProfileAccess() {
-      // create profile for service account (provides the API key allowing self account cezation for registered users)
+      // create profile for service account (provides the API key allowing self account creation for registered users)
       $profileId = self::getOrCreateProfile(
             self::SERVICE_PROFILE_NAME,
          __('service Flyve MDM user\'s profile. Created by Flyve MDM - do NOT modify this comment.', 'flyvemdmdemo')
