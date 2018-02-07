@@ -26,7 +26,7 @@ To get started, check out [Flyve MDM Website](https://flyve-mdm.com/)!
 
 ## Synopsis
 
-This plugin for GLPI provides features required to setup a demo instance of FlyveMDM.
+This plugin for GLPI provides features required to setup a demo instance of Flyve MDM.
 
 ## Build Status
 
@@ -36,19 +36,11 @@ This plugin for GLPI provides features required to setup a demo instance of Flyv
 
 ## Installation
 
-Install the plugin as a regular plugin for GLPI, and enable it.
-
-### Configuration of the demo mode
-
-Open the configuration page of the plugin from the plugins page in GLPI.
-
-Turn on the demo mode, and specify the Webapp URL the users can reach to manage their demo company.
-
-Enable the setting Time limit to limit the lifetime of the demo accounts. After a 90 days period, users will lose ability view and edit their fleets and devices.
+The instructions and requirements to install Flyve MDM Demo plugin are on our website, see our [Installation article](http://flyve.org/demo-mode/howtos/installation)
 
 ## Documentation
 
-We share long-form content about the project on the [website](http://flyve.org/demo-mode/).
+We share long-form content about the project on the [website](http://flyve.org/demo-mode/howtos).
 
 ## Versioning
 
@@ -65,7 +57,7 @@ guidelines for [contributing](./CONTRIBUTING.md) and then check out one of our i
 
 For notices about major changes and general discussion of Flyve MDM development, subscribe to the [/r/FlyveMDM](http://www.reddit.com/r/FlyveMDM) subreddit.
 You can also chat with us via IRC in [#flyve-mdm on freenode](http://webchat.freenode.net/?channels=flyve-mdm).
-Ping me @hectorerb in the IRC chatroom if you get stuck.
+Ping me @btry in the IRC chatroom if you get stuck.
 
 ## Copying
 
