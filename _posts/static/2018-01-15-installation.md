@@ -31,7 +31,7 @@ description: Easy and simple
 
 * Download it from the repository, there are two methods available:
 
-  * Using ```git clone git https://github.com/flyve-mdm/demo-mode.git```
+  * Using ```git clone https://github.com/flyve-mdm/demo-mode.git```
   * [Download the zip](https://github.com/flyve-mdm/demo-mode/archive/develop.zip) file
 
 * Your plugins directory should be like this:
