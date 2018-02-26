@@ -9,9 +9,13 @@ description: What you should know
 
 # Flyve MDM Demo
 
-The Demo allows the self creation of accounts, since GLPI currently doesn't count with this feature, the endpoint required is one provided by the same demo, PluginFlyvemdmddemoUsers.
+The Demo allows the self creation of accounts, since GLPI doesn't count with this feature, the endpoint required is one provided by the same demo, PluginFlyvemdmddemoUsers.
 
-## Captcha
+Once the plugin is installed and enabled, it creates a user into GLPI, ```flyvenologin``` whose API Token is the only with access to the plugin endpoints, this one is the Service's API Token on the settings page of the plugin.
+
+## Registering accounts
+
+### Captcha
 
 At the moment of registering the user information a captcha must be provided, otherwise it won't allow the user registration.
 
@@ -19,15 +23,13 @@ To generate and display the captcha to the user, two different methods are used,
 
 If the captcha is too complicated for the user, a new one can be requested with the same procedure through a refresh feature.
 
-## Account validation
+### Account validation
 
-Once the account is succesfully created, the user will receive an email to validate it.
+Once the account is succesfully created, the user will receive an email to validate it, at this moment the profile of the new account is Flyve MDM inactive registered user.
 
 This validation has a time limit of 1 day, if the user doesn't confirm, its account will be removed from GLPI.
 
-When the validation is successful the profile is changed from Flyve MDM inactive registered users to Flyve MDM registered user.
-
-The user will have now access to both the Web Dashboard and the GLPI interface.
+When the validation is successful the profile is changed to Flyve MDM registered user, the user will have now access to both the Web Dashboard and the GLPI interface.
 
 ## Demo account time limit
 
