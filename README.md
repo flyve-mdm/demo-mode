@@ -17,7 +17,7 @@ To get started, check out [Flyve MDM Website](https://flyve-mdm.com/)!
 
 * [Synopsis](#synopsis)
 * [Build Status](#build-status)
-* [Compatibility Matrix](#matrix)
+* [Compatibility Matrix](#compatibility-matrix)
 * [Installation](#installation)
 * [Documentation](#documentation)
 * [Versioning](#versioning)
@@ -27,7 +27,7 @@ To get started, check out [Flyve MDM Website](https://flyve-mdm.com/)!
 
 ## Synopsis
 
-This plugin for GLPI provides features required to setup a demo instance of Flyve MDM.
+Flyve MDM Demo plugin for GLPI, enables the self-generation accounts feature for the Web MDM Dashboard allowing the registration of new users to the GLPI DB.
 
 ## Build Status
 
@@ -49,7 +49,7 @@ The instructions and requirements to install Flyve MDM Demo plugin are on our we
 
 ## Documentation
 
-We share long-form content about the project on the [website](http://flyve.org/demo-mode/howtos).
+We share long-form content about the project on the website, see our [How-tos](http://flyve.org/demo-mode/howtos) and [Development](http://flyve.org/demo-mode/) sections.
 
 ## Versioning
 
