@@ -17,6 +17,7 @@ To get started, check out [Flyve MDM Website](https://flyve-mdm.com/)!
 
 * [Synopsis](#synopsis)
 * [Build Status](#build-status)
+* [Compatibility Matrix](#matrix)
 * [Installation](#installation)
 * [Documentation](#documentation)
 * [Versioning](#versioning)
@@ -33,6 +34,14 @@ This plugin for GLPI provides features required to setup a demo instance of Flyv
 | **Release channel** | **Beta channel** |
 |:---:|:---:|
 | [![Build Status](https://travis-ci.org/flyve-mdm/demo-mode.svg?branch=master)](https://travis-ci.org/flyve-mdm/demo-mode) | [![Build Status](https://travis-ci.org/flyve-mdm/demo-mode.svg?branch=develop)](https://travis-ci.org/flyve-mdm/demo-mode) |
+
+## Compatibility Matrix
+
+|GLPI|9.1.x|9.2.x|
+|:---|:---:|:---:|
+|Flyve MDM|1.x|2.0.0-dev|
+|Demo Mode|-|1.0.0-dev|
+|Web MDM Dashboard|-|1.0.0-dev|
 
 ## Installation
 
