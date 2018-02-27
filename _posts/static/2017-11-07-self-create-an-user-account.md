@@ -2,9 +2,9 @@
 layout: post
 howtos: true
 published: true
-title: Self create an user account
+title: Self create a user account
 permalink: howtos/self-create-account
-description: Requests to self create an user account
+description: All the requests implemented
 ---
 
 ## Requests
