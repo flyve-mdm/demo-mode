@@ -613,7 +613,7 @@ Regards,
             ),
             PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_BEGIN => array(
                   'itemtype'        => PluginFlyvemdmdemoAccountvalidation::class,
-                  'name'            => __('Account activated', "flyvemdmdemo"),
+                  'name'            => __('Account activated', 'flyvemdmdemo'),
                   'subject'         => __('Get started with Flyve MDM', 'flyvemdmdemo'),
                   'content_text'    => __('Hi there,
 
@@ -654,7 +654,7 @@ Regards,
             ),
             PluginFlyvemdmdemoNotificationTargetAccountvalidation::EVENT_TRIAL_EXPIRATION_REMIND_1 => array(
                   'itemtype'        => PluginFlyvemdmdemoAccountvalidation::class,
-                  'name'            => __('First trial reminder', "flyvemdmdemo"),
+                  'name'            => __('First trial reminder', 'flyvemdmdemo'),
                   'subject'         => __('Your Flyve MDM trial will end soon! - Only ##flyvemdmdemo.days_remaining## left!', 'flyvemdmdemo'),
                   'content_text'    => __('Hi there,
 
@@ -859,7 +859,7 @@ Regards,
          $document = new Document();
          $input['entities_id']               = '0';
          $input['is_recursive']              = '1';
-         $input['name']                      = __('Flyve MDM Facebook  icon', 'flyvemdmdemo');
+         $input['name']                      = __('Flyve MDM Facebook icon', 'flyvemdmdemo');
          $input['_filename']                 = array('flyve-facebook.jpg');
          $input['_only_if_upload_succeed']   = true;
          if ($document->add($input)) {
