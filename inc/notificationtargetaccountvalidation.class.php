@@ -108,7 +108,7 @@ class PluginFlyvemdmdemoNotificationTargetAccountvalidation extends Notification
                 $accountValidation = $this->obj;
                 $accountValidationId = $accountValidation->getID();
                 $validationToken = $accountValidation->getField('validation_pass');
-                $validationUrl = $config['webapp_url'] . "#!/account/$accountValidationId/validation/$validationToken";
+                $validationUrl = $config['webapp_url'] . "validateAccount/$accountValidationId/validation/$validationToken";
 
                 $activationDelay = new DateInterval('P' . $accountValidation->getActivationDelay() . 'D');
                 $activationDelay = $activationDelay->format('%d');
