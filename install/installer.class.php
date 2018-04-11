@@ -215,6 +215,7 @@ class PluginFlyvemdmdemoInstaller {
          Software::$rightname                      => READ,
          NetworkPort::$rightname                   => READ,
          CommonDropdown::$rightname                => READ,
+         KnowbaseItem::$rightname                  => READ | KnowbaseItem::READFAQ | KnowbaseItem::COMMENTS,
       ));
       $profile = new Profile();
       $profile->update([
