@@ -21,7 +21,7 @@
         "glpi-project/coding-standard" : "0.5",
         "glpi-project/tools": "0.1.3",
         "phpunit/phpunit" : "^4.8 || ^5.4 || ^6.0",
-        "flyve-mdm/test" : "^1.0",
+        "flyve-mdm/test" : "dev-master#175b4d4be344381cb0829e7cdc6e5af91f72a017",
         "consolidation/robo" : "^1.0",
         "evert/phpdoc-md": "^0.2.0",
         "phpdocumentor/phpdocumentor": "2.*"
