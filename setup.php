@@ -91,7 +91,7 @@ function plugin_flyvemdmdemo_addHooks() {
       PluginFlyvemdmFleet::class => 'plugin_flyvemdmdemo_pre_fleet_purge',
    ];
 
-   $PLUGIN_HOOKS['item_purge']['flyvemdm']   = [
+   $PLUGIN_HOOKS['item_purge']['flyvemdmdemo']   = [
       User::class => [PluginFlyvemdmDemoUser::class, 'hook_pre_user_purge'],
    ];
 
