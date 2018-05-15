@@ -5,8 +5,10 @@
 [![License](https://img.shields.io/github/license/flyve-mdm/demo-mode.svg?&label=License)](https://github.com/flyve-mdm/demo-mode/blob/develop/LICENSE.md)
 [![Follow twitter](https://img.shields.io/twitter/follow/FlyveMDM.svg?style=social&label=Twitter&style=flat-square)](https://twitter.com/FlyveMDM)
 [![Telegram Group](https://img.shields.io/badge/Telegram-Group-blue.svg)](https://t.me/flyvemdm)
+[![IRC Chat](https://img.shields.io/badge/IRC-%23flyvemdm-green.svg)](http://webchat.freenode.net/?channels=flyve-mdm)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Greenkeeper badge](https://badges.greenkeeper.io/flyve-mdm/flyve-mdm-glpi-demo.svg)](https://greenkeeper.io/)
+[![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![GitHub release](https://img.shields.io/github/release/flyve-mdm/flyve-mdm-glpi-demo.svg)](https://github.com/flyve-mdm/flyve-mdm-glpi-demo/releases)
 
 Flyve MDM is a Mobile device management software that enables you to secure and manage all the mobile devices of your business or family via a web-based console.
@@ -23,6 +25,7 @@ To get started, check out [Flyve MDM Website](https://flyve-mdm.com/)!
 * [Versioning](#versioning)
 * [Contribute](#contribute)
 * [Contact](#contact)
+* [Professional Services](#professional-services)
 * [Copying](#copying)
 
 ## Synopsis
@@ -31,7 +34,7 @@ Flyve MDM Demo plugin for GLPI, enables the self-generation accounts feature for
 
 ## Build Status
 
-| **Release channel** | **Beta channel** |
+| **LTS** | **Bleeding Edge** |
 |:---:|:---:|
 | [![Build Status](https://travis-ci.org/flyve-mdm/demo-mode.svg?branch=master)](https://travis-ci.org/flyve-mdm/demo-mode) | [![Build Status](https://travis-ci.org/flyve-mdm/demo-mode.svg?branch=develop)](https://travis-ci.org/flyve-mdm/demo-mode) |
 
@@ -65,8 +68,14 @@ guidelines for [contributing](./CONTRIBUTING.md) and then check out one of our i
 ## Contact
 
 For notices about major changes and general discussion of Flyve MDM development, subscribe to the [/r/FlyveMDM](http://www.reddit.com/r/FlyveMDM) subreddit.
-You can also chat with us via IRC in [#flyve-mdm on freenode](http://webchat.freenode.net/?channels=flyve-mdm).
+You can also chat with us via IRC in [#flyve-mdm on freenode](http://webchat.freenode.net/?channels=flyve-mdm) or [@flyvemdm on Telegram](https://t.me/flyvemdm).
 Ping me @btry in the IRC chatroom if you get stuck.
+
+## Professional Services
+
+The Flyve MDM and GLPI Network services are available through our [Partner's Network](http://www.teclib-edition.com/en/partners/). We provide special training, bug fixes with editor subscription, contributions for new features, and more.
+
+Obtain a personalized service experience, associated with benefits and opportunities.
 
 ## Copying
 
