@@ -150,6 +150,9 @@ class PluginFlyvemdmdemoConfig extends CommonDBTM
                $config->resetDemoNotificationSignature();
                $config->disableDemoAccountService();
             } else {
+               if (strrpos($input['webapp_url'], '/') != strlen($input['webapp_url']) - 1) {
+                  $input['webapp_url'] .= '/';
+               }
                $config->setDemoNotificationSignature();
                $config->enableDemoAccountService();
             }

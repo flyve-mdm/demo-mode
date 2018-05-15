@@ -222,4 +222,11 @@ class RegisteredUserProfileIntegrationTest extends CommonTestCase
       $this->assertEquals(READ, $rights[Config::$rightname]);
    }
 
+    /**
+    * @depends testGetRights
+    * @param array $rights
+    */
+    public function testRegisteredUserProfileKnowbaseItemRight($rights) {
+      $this->assertEquals(READ | KnowbaseItem::READFAQ | KnowbaseItem::COMMENTS, $rights[Config::$rightname]);
+   }
 }
