@@ -2,46 +2,38 @@ language: php
 
 env:
   global:
-    - GLPI_SOURCE="https://github.com/glpi-project/glpi -b 9.2/bugfixes" 
-    - FUSION_SOURCE="https://github.com/fusioninventory/fusioninventory-for-glpi -b master" 
-    - FLYVEMDM_SOURCE="https://github.com/flyve-mdm/flyve-mdm-glpi-plugin -b develop"
+    - GLPI_SOURCE="https://github.com/glpi-project/glpi"
+    - FI_SOURCE="https://github.com/fusioninventory/fusioninventory-for-glpi"
+    - FLYVEMDM_SOURCE="https://github.com/flyve-mdm/glpi-plugin"
+    - CS=7.2
+    - DBNAME=glpitest
     - secure: riqurLkD5HXiKdkjSZXipb4+2VhXIjV6yjex7z89eHYqVhK049k/qIuxX2nCCCB7BxVuA+2fjDXXgjH4XihYvIcwxepplbDEjzgTYp/dDmN/8w3v9GvNBrD5fiV68a98Wpdy9zfbGk5hcoabKGJdyYCAFzCqLYmMGo5JU52lV2v6FcjkmkogFEpcKkg6+eZvDdCuCMgKziXwXKG7mDENAZA3PlPMaTmQ+sNaCWyYPKYC08+TGRIP9sS+lTY78SW/gY06CgWeJ1cF/MSRf8g0payEl9B4BuVFt8eAk+QIhDxvfkUmjIMEciT9c3stwsLnZQW1P4AAsmAqpmdajoGPg8XY+ZmFNdvAkh9hbGzdIy50v+cKlNyi2w/ZC5iQg43fmC0YwoGLd225FI1gJQFMkQiMYj2mi1Ir0/QFfVM5G5VWALRGQs5CyGOl9MOy01QISkkuURHYGLw+7jCCZyYmfww5gFO4RFcjPDBpoQt8Ra3Lbq1IaWt/gd4eQWjoXqiUjkYQ5L0tHd2Na4DR9q7X72mPoswUucxRAusF1M883uxIVWJRGFVs3Sup6U8qnZxXrpWIN8fpAtO7NuTQoCF48AhIC32+i41Ab002AUQLij8r8GGVehprhgyTbqDtd7zXWuC04rWBwVmXLsYvvqcszY2INUz4/jPswvHuvpZraxI=
-    - DB=glpitest
-    
+  matrix:
+    - GLPI_BRANCH=9.2.1 FI_BRANCH=glpi9.2+1.0 FLYVEMDM_BRANCH=develop
+    - GLPI_BRANCH=9.2/bugfixes FI_BRANCH=glpi9.2+1.0 FLYVEMDM_BRANCH=develop
+    - GLPI_BRANCH=9.3/bugfixes FI_BRANCH=master FLYVEMDM_BRANCH=develop
+    - GLPI_BRANCH=master FI_BRANCH=master FLYVEMDM_BRANCH=develop
+
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+  - nightly
+
+allow_failures:
+  - php: nightly
+
+before_script:
+  - "./tests/before_script.sh"
+
+script:
+  - vendor/bin/phpunit -v
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "$CS" ]] && [ "$GLPI_BRANCH" = "9.2/bugfixes" ]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ *.php front/ inc/ tests/; fi
+
 cache:
   directories:
     - $HOME/.composer/cache
 
-before_script:
-  - mysql -u root -e 'create database $DB;'
-  - phpenv config-rm xdebug.ini || true
-  - rm -f composer.lock
-  - tests/config-composer.sh
-  - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
-  - composer install --no-dev
-  - php tools/cliinstall.php --db=$DB --user=travis --tests
-  - cp tests/config_db.php config/config_db.php
-  - mkdir plugins/fusioninventory && git clone --depth=1 $FUSION_SOURCE plugins/fusioninventory
-  - mkdir plugins/flyvemdm && git clone --depth=1 $FLYVEMDM_SOURCE plugins/flyvemdm
-  - cd plugins/flyvemdm && composer install --no-dev && cd ../..
-  - IFS=/ read -a repo <<< $TRAVIS_REPO_SLUG
-  - mv ../${repo[1]} plugins/flyvemdmdemo
-  - cd plugins/flyvemdmdemo && composer install -o
-
-script:
-  - vendor/bin/phpunit -v
-  - if [[ "$CS" == "true" ]]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ *.php front/ inc/ tests/; fi
-
-matrix:
-  include:
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-      env: CS=true
-    - php: nightly
-  allow_failures:
-    - php: nightly
-  
 notifications:
   webhooks: https://hooks.aethonan.pro/travisci/-1001061475099/
