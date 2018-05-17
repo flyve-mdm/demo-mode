@@ -5,6 +5,8 @@ published: true
 title: Self create a user account
 permalink: howtos/self-create-account
 description: All the requests implemented
+category: user
+date: 2018-01-13
 ---
 
 ## Requests

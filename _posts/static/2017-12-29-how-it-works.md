@@ -5,6 +5,7 @@ published: true
 title: How it works
 permalink: howtos/how-it-works
 description: Learn everything about Demo plugin
+category: user
 ---
 
 # Flyve MDM Demo

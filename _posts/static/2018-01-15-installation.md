@@ -5,6 +5,7 @@ published: true
 title: Installation
 permalink: howtos/installation
 description: Easy and simple
+category: user
 ---
 # Prerequisites
 
