@@ -24,6 +24,6 @@
     },
     "homepage": "https://github.com/flyve-mdm/flyve-mdm-glpi-demo#readme",
     "devDependencies": {
-        "standard-version": "^4.0.0"
+        "standard-version": "^4.4.0"
     }
 }
